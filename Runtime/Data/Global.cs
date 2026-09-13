@@ -64,6 +64,7 @@ public class Global
         AdjustMotion = 11, // 朝向调整轨道 — Event: AdjustMotionSegment（帧段内持续面朝目标）
         Trail        = 12, // 刀光轨道 — Event: TrailToggle（刀光/拖尾开关控制）
         Camera       = 14,
+        Flow         = 15,
         Interaction  = 13, // 可扩展交互窗口（追加数值，保留旧资产枚举身份）
     }
 
@@ -170,9 +171,18 @@ public class Global
     //  Event: 攻击判定指令
     // ═══════════════════════════════════════════════════════════
 
+    public enum CollisionResponseMode { Damage = 0, Signal = 1 }
+
     [System.Serializable]
     public class Attack
     {
+        public string collisionName = "Collision";
+        public CollisionResponseMode responseMode;
+        public string contactSignal = "Contact";
+        [Tooltip("Full box height in world units.")]
+        public float boxHeight = 2f;
+        [Tooltip("Box rotation relative to the actor, in degrees.")]
+        public Vector3 collisionRotation;
         [Header("Interaction filters")]
         public bool unblockable;
         public bool unparryable;

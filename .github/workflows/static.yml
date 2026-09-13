@@ -15,7 +15,7 @@ jobs:
           package = json.loads((root / 'package.json').read_text())
           assert package['name'] == 'com.ethan.act-action-editor'
           assert package['license'] == 'MIT'
-          for name in ['AGENTS.md', 'CONTRIBUTING.md', 'LICENSE.md', 'README.md', 'CHANGELOG.md', 'Documentation~/AgentCapabilities.json', 'Documentation~/UserGuide.zh-CN.md', 'Documentation~/Maintenance.zh-CN.md', 'ROADMAP.zh-CN.md', 'Tools~/Build-Release.ps1', 'Tools~/Verify-Release.ps1']:
+          for name in ['AGENTS.md', 'CONTRIBUTING.md', 'LICENSE.md', 'README.md', 'CHANGELOG.md', 'Documentation~/AgentCapabilities.json', 'Documentation~/UserGuide.zh-CN.md', 'Documentation~/Maintenance.zh-CN.md', 'Tools~/Build-Release.ps1', 'Tools~/Verify-Release.ps1']:
               assert (root / name).is_file(), name
           capabilities = json.loads((root / 'Documentation~/AgentCapabilities.json').read_text())
           assert capabilities['packageVersion'] == package['version']

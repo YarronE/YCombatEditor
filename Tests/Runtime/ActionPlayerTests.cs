@@ -42,6 +42,85 @@ namespace Ethan.ActionEditor.Tests
             }
             finally { Object.DestroyImmediate(audio); }
         }
+        [TestCase(0)]
+        [TestCase(5)]
+        public void FlowCompleteStopsBeforeSameFrameEventsAndClosesOpenRanges(int frame)
+        {
+            _config.exitFrame=60;
+            var ranges=_actor.AddComponent<TestRangeHandler>();
+            _config.cancelList.Add(new Global.CancelPoint { keyNumber=0,endKeyNumber=50 });
+            _config.flowNodes.Add(new ActionFlowNode { kind=ActionFlowKind.Complete,keyNumber=frame });
+            var sound=AudioClip.Create("FlowLate",16,1,8000,false);
+            _config.fxList.Add(new Global.FxAndSound {keyNumber=frame,audioClip=sound});
+            try {
+                var player=_actor.GetComponent<ActionPlayer>();
+                ActionStopReason? reason=null; player.Stopped+=(c,r)=>reason=r;
+                Assert.That(player.TryPlay(new ActionPlayRequest(_config),out var error),Is.True,error.Message);
+                player.Advance(1);
+                Assert.That(player.IsPlaying,Is.False); Assert.That(reason,Is.EqualTo(ActionStopReason.Completed));
+                Assert.That(_actor.GetComponent<TestFxHandler>().Count,Is.Zero);
+                Assert.That(ranges.Phases.FindAll(p=>p==ActionEventPhase.Exit).Count,Is.EqualTo(frame==0?0:1));
+            } finally { Object.DestroyImmediate(sound); }
+        }
+
+        [Test]
+        public void FlowRequestBranchesBeforeFreeExitAndRejectsInvalidTargetsWithoutStopping()
+        {
+            var next=ScriptableObject.CreateInstance<SkillConfigSO>();
+            try {
+                next.exitFrame=60; _config.exitFrame=60;
+                next.animSegments.Add(new Global.AnimClipSegment {clip=_clip});
+                _config.flowNodes.Add(new ActionFlowNode {kind=ActionFlowKind.Branch,keyNumber=3,command="Attack",nextAction=next});
+                var player=_actor.GetComponent<ActionPlayer>();
+                Assert.That(player.TryPlay(new ActionPlayRequest(_config),out _),Is.True);
+                Assert.That(player.TryRequestFlow("Attack",null,null,out _),Is.False);
+                player.Advance(3.1f/30);
+                next.timelineFrameRate=float.NaN; next.timingVersion=1;
+                Assert.That(player.TryRequestFlow("Attack",null,null,out _),Is.False);
+                Assert.That(player.CurrentConfig,Is.SameAs(_config));
+                next.timelineFrameRate=30;
+                Assert.That(player.TryRequestFlow("Attack",null,null,out _),Is.True);
+                Assert.That(player.CurrentConfig,Is.SameAs(next));
+            } finally { Object.DestroyImmediate(next); }
+        }
+
+        [Test]
+        public void FlowCallbackReplacementWinsWithoutFurtherBranchAttempts()
+        {
+            var next=ScriptableObject.CreateInstance<SkillConfigSO>();
+            var winner=ScriptableObject.CreateInstance<SkillConfigSO>();
+            try {
+                _config.exitFrame=60; next.exitFrame=60; winner.exitFrame=60;
+                next.animSegments.Add(new Global.AnimClipSegment{clip=_clip}); winner.animSegments.Add(new Global.AnimClipSegment{clip=_clip});
+                _config.flowNodes.Add(new ActionFlowNode{kind=ActionFlowKind.Branch,command="Attack",nextAction=next});
+                _config.flowNodes.Add(new ActionFlowNode{kind=ActionFlowKind.Branch,command="Attack",nextAction=next});
+                var player=_actor.GetComponent<ActionPlayer>();
+                Assert.That(player.TryPlay(new ActionPlayRequest(_config),out _),Is.True);
+                System.Action<SkillConfigSO,ActionStopReason> callback=null;
+                callback=(c,r)=>{player.Stopped-=callback;player.TryPlay(new ActionPlayRequest(winner),out _);};
+                player.Stopped+=callback;
+                Assert.That(player.TryRequestFlow("Attack",null,null,out _),Is.False);
+                Assert.That(player.CurrentConfig,Is.SameAs(winner));
+            } finally { Object.DestroyImmediate(next); Object.DestroyImmediate(winner); }
+        }
+
+        [Test]
+        public void AutomaticBranchesAtFrameZeroDoNotRecurseIndefinitely()
+        {
+            var next=ScriptableObject.CreateInstance<SkillConfigSO>();
+            try {
+                next.exitFrame=60; _config.exitFrame=60;
+                next.animSegments.Add(new Global.AnimClipSegment {clip=_clip});
+                _config.flowNodes.Add(new ActionFlowNode {kind=ActionFlowKind.Branch,automatic=true,nextAction=next});
+                next.flowNodes.Add(new ActionFlowNode {kind=ActionFlowKind.Branch,automatic=true,nextAction=_config});
+                var player=_actor.GetComponent<ActionPlayer>();
+                Assert.That(player.TryPlay(new ActionPlayRequest(_config),out _),Is.True);
+                Assert.That(player.CurrentConfig,Is.SameAs(next));
+                player.Advance(1f/30);
+                Assert.That(player.CurrentConfig,Is.SameAs(_config));
+            } finally { Object.DestroyImmediate(next); }
+        }
+
         [TearDown]
         public void TearDown()
         {

@@ -35,3 +35,11 @@ Compile → run Basic Playback → validate the action → inspect the actor wit
 ## Demo and standalone repository synchronization
 
 The maintainer develops reusable changes in the Demo Embedded package. For every general editor/runtime improvement, update the Chinese manual, CHANGELOG and roadmap as applicable, run relevant checks, and synchronize the independent YCombatEditor source using the Demo sync tool. Keep character assets, AI, game balance, commercial plugins and Demo Git history out of this package. Port independent repository fixes back before syncing; do not overwrite divergent files. Release artifacts are versioned and immutable: bump the version and validate final TGZ bytes before a new release. See Documentation~/Maintenance.zh-CN.md.
+
+## Public documentation style
+
+Write README and user manuals for readers discovering or using the product. Describe product purpose, coherent capabilities, installation and practical workflows. Do not reproduce maintainer prompts, conversation history, task-by-task delivery summaries, comparisons to previously removed plugins, or assurances framed as responses to a request. Keep README at the capability level; put field-level operation details in the relevant manual section, compatibility changes in migration notes/CHANGELOG, and release audits or synchronization procedures in maintainer documentation. Use natural product language and retain only constraints that help the reader act.
+
+## Local planning documents
+
+ROADMAP.zh-CN.md and its .meta are local-only planning files. Preserve them locally, but do not track, publish, package or synchronize them to the public repository. Public documentation and CI must not require these files.

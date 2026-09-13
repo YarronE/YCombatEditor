@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Ethan.ActionEditor
 {
     [DisallowMultipleComponent]
-    public sealed class ActionPlayer : MonoBehaviour
+    public sealed partial class ActionPlayer : MonoBehaviour
     {
         [SerializeField, Min(1f)] float defaultFrameRate = 30f;
         [SerializeField] bool discoverHandlersOnAwake = true;
@@ -202,6 +202,7 @@ namespace Ethan.ActionEditor
             }
             RestoreCapabilities(candidateAnimator, candidateTargetProvider, candidateHandlers);
             _config = request.Config;
+            _flowRequest = request;
             _phase = request.Phase;
             _speed = request.Speed;
             _frameRate = ResolveFrameRate(_config, request.FallbackFrameRate > 0f ? request.FallbackFrameRate : defaultFrameRate);
@@ -247,6 +248,7 @@ namespace Ethan.ActionEditor
             }
             ++_generation;
             _config = request.Config;
+            _flowRequest = request;
             _phase = request.Phase;
             _speed = request.Speed;
             _frameRate = ResolveFrameRate(_config, request.FallbackFrameRate > 0f ? request.FallbackFrameRate : defaultFrameRate);
@@ -328,6 +330,8 @@ namespace Ethan.ActionEditor
         {
             var config = _config;
             int generation = _generation;
+            if (ActionFlow.IsComplete(config, frame)) { Stop(ActionStopReason.Completed); return; }
+            if (TryAutomaticFlow(frame) || !IsCurrent(generation)) return;
             DispatchAnimation(frame);
             if (!IsCurrent(generation)) return;
             if (_animator is IActionAnimationClock clock) clock.Sample(frame);

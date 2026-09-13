@@ -29,12 +29,15 @@ function Matches([string] $path, [string] $hash) {
     return (Test-Path -LiteralPath $path -PathType Leaf) -and (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -eq $hash
 }
 $inventory = Get-Content -LiteralPath (Join-Path $candidate 'inventory.json') -Raw | ConvertFrom-Json
+$localOnly = @('ROADMAP.zh-CN.md','ROADMAP.zh-CN.md.meta')
+if ($inventory.files | Where-Object { $_.path -in $localOnly }) { throw 'Roadmap is local-only. Re-export the candidate without it.' }
 $manifest = Get-Content -LiteralPath (Join-Path $source 'package.json') -Raw | ConvertFrom-Json
 if ($manifest.name -ne 'com.ethan.act-action-editor' -or $manifest.version -ne $inventory.version -or $manifest.version -notmatch '^\d+\.\d+\.\d+[-.A-Za-z0-9]*$') { throw 'Unexpected package identity/version.' }
 $statePath = Join-Path $targetRoot '.ycombat-sync.json'
 $previous = if (Test-Path -LiteralPath $statePath) { Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json } else { $null }
 if (!$previous -and !$Initialize) { throw 'First sync requires -Initialize. Review the target first.' }
 if ($previous) {
+    $previous.files = @($previous.files | Where-Object { $_.path -notin $localOnly })
     foreach ($entry in $previous.files) {
         if (!(Matches (SafePath $targetRoot $entry.path) $entry.sha256)) { throw "Independent target edit: $($entry.path). Port it to the development source before syncing." }
     }
@@ -70,6 +73,7 @@ foreach ($entry in $inventory.files) {
     if (!(Matches $target $entry.sha256)) { throw 'Source copy hash mismatch.' }
 }
 if ($previous) {
+    $previous.files = @($previous.files | Where-Object { $_.path -notin $localOnly })
     foreach ($entry in $previous.files) {
         if ($inventory.files.path -notcontains $entry.path) { Remove-Item -LiteralPath (SafePath $targetRoot $entry.path) }
     }

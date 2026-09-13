@@ -139,3 +139,23 @@ Actor preflight remains `InspectActor(GameObject,SkillConfigSO)`, a read-only C#
 - InteractionConditionGroup validates the entire graph, supports All/Any/Not, rejects cycles/missing children, and never consumes resources. Empty groups are invalid; Not requires one child. Exceptions fail closed, including under Not.
 - Enable ActionPlayer.InteractionDiagnosticsEnabled to retain candidate/condition traces, or use its runtime Inspector. Diagnostics are opt-in to avoid normal-play allocation.
 - External hosts must pause both their gameplay clock and animation when ActionPlayer.IsPaused is true; ReportExternalFrame alone cannot pause a host. Release all host presentation ownership on completion, replacement, interruption and disable.
+
+## Collision contacts
+
+The editor presents the existing serialized attack event as Collision. Existing TrackType IDs, attackList and Global.Attack references remain valid. Shape data stays on the event; boxHeight is the full height and collisionRotation is relative to the actor. Use ActionCollisionGeometry.Center, Rotation and BoxSize to keep host queries consistent with editor visualization. Dimensions are world units; offsets use the actor transform.
+
+A host receiving Global.Attack must query colliders and apply the configured response. Damage uses the host combat rules. Signal uses contactSignal and should not apply damage. After confirming a signal contact, the host calls ActionCollisionContact.Notify with the actor, config, event, collider, contact point and frame. Enabled IActionCollisionReceiver components on the actor receive OnCollision. This is an integration interface, not an automatic physics driver or damage implementation.
+
+The Demo character and Boss adapters support these shape parameters and signal callbacks. Signal queries use the actor's configured collision mask and can contact colliders without IDamageable. Visual and audio feedback is applied by the adapter on contact; other hosts implement their own feedback policy.
+
+## Action Flow
+
+SkillConfigSO.flowNodes contains ActionFlowNode entries. ActionPlayer evaluates new Complete boundaries before frame events, tries Automatic branches before other events, and exposes TryRequestFlow(command, requestedAction, category, out error) for requested branches and eligible exits. TryPlay remains the force/start API. Branch target validation precedes replacement. Complete triggers Stopped with Completed and closes active ranges. Same-frame Complete takes precedence. Failed activation leaves the current action active. Automatic frame-zero chains are bounded to one replacement per dispatch call.
+
+External hosts call ActionFlow.IsComplete, MatchesBranch and CanExit themselves; TryBeginExternal does not execute Flow. The Demo CharacterSkillPlayer routes command input and category-specific exit candidates to these policies. BossSkillPlayer exposes TryRequestFlow for AI and evaluates automatic branches across crossed frames; automatic successors preserve the behavior-tree task ownership token, while external replacements get a new token; its existing Completed stop reason lets behavior-tree tasks finish. Force APIs retain their explicit bypass behavior. ActionFlowCondition is a read-only ScriptableObject predicate; all configured conditions must pass. Costs belong to accepted activation. Animation blending stays with the host.
+
+Legacy jumpList, cancelList and exitFrame remain serialized and retain their original host execution. Only the editor presentation groups them into Action Flow; new flowNodes do not silently convert old assets.
+
+## Telegraph authoring
+
+The editor groups Global.TrackType.Warning with Fx/Sound under Effect. Telegraph entries still serialize to warningCueList and dispatch Global.WarningCue; host receivers and payload semantics are unchanged. The editor supports mixed effect/telegraph lanes and clipboard operations without converting legacy data.

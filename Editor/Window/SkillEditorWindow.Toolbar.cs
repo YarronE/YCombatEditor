@@ -15,7 +15,7 @@ public partial class SkillEditorWindow
         if(GUILayout.Button("Redo",EditorStyles.miniButton,GUILayout.Width(44)))RedoLatest();
         GUILayout.Space(10);EditorGUIUtility.labelWidth=44;EditorGUI.BeginChangeCheck();
         var selected=(SkillConfigSO)EditorGUILayout.ObjectField("Action",configFile,typeof(SkillConfigSO),false,GUILayout.MinWidth(180));
-        if(EditorGUI.EndChangeCheck()){StopPreviewSession();CommitDeferredChanges();configFile=selected;if(configFile!=null)LoadConfig();}
+        bool actionChanged=EditorGUI.EndChangeCheck();
         using(new EditorGUI.DisabledScope(configFile==null)){
             if(GUILayout.Button("Action properties",EditorStyles.miniButton,GUILayout.Width(110))){selType=SelType.Basic;selIdx=-1;}
             if(GUILayout.Button("Tools",EditorStyles.miniButton,GUILayout.Width(48)))ShowActionTools();
@@ -45,5 +45,12 @@ public partial class SkillEditorWindow
         pixelsPerFrame=GUILayout.HorizontalSlider(pixelsPerFrame,MIN_PPF,MAX_PPF,GUILayout.Width(65));
         if(GUILayout.Button("Fit",EditorStyles.miniButton,GUILayout.Width(34)))FitTimeline();
         EditorGUILayout.EndHorizontal();GUILayout.EndArea();EditorGUIUtility.labelWidth=0;
+        if(actionChanged){
+            SelectConfig(selected);
+            GUI.FocusControl(null);
+            // The new asset can use a different GUI tree (legacy / editable / empty).
+            // Finish the old toolbar first, then rebuild layout on the next GUI pass.
+            GUIUtility.ExitGUI();
+        }
     }
 }

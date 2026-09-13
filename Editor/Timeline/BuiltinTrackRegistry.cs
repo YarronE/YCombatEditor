@@ -6,6 +6,7 @@ namespace Ethan.ActionEditor.Editor
         {
             switch (track)
             {
+                case "Flow": return "flowNodes";
                 case "Camera": return "cameraCues";
                 case "Animation": return "animSegments";
                 case "Attack": return "attackList";
@@ -31,7 +32,7 @@ namespace Ethan.ActionEditor.Editor
         internal static bool IsVisibleInSoundTrack(Global.FxAndSound item) => item != null && (item.audioClip != null || item.particleSystem == null);
 
         internal static Global.TrackType Canonical(Global.TrackType type) =>
-            type == Global.TrackType.Sound ? Global.TrackType.Fx : type == Global.TrackType.AdjustMotion ? Global.TrackType.Move : type;
+            type == Global.TrackType.Jump || type == Global.TrackType.Cancel ? Global.TrackType.Flow : type == Global.TrackType.Sound || type == Global.TrackType.Warning ? Global.TrackType.Fx : type == Global.TrackType.AdjustMotion ? Global.TrackType.Move : type;
 
         internal static string GetCategory(Global.TrackType type)
         {

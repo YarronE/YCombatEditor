@@ -81,7 +81,8 @@ if ($PackageGitUrl) {
 Copy-Item -LiteralPath $sampleSource -Destination (Join-Path $project 'Assets/BasicPlayback') -Recurse
 $results = Join-Path $evidence 'TestResults.xml'
 $log = Join-Path $evidence 'Unity.log'
-$arguments = '-batchmode -nographics -projectPath "{0}" -runTests -testPlatform EditMode -testResults "{1}" -logFile "{2}"' -f $project, $results, $log
+# Window repaint regressions need a graphics device even in batch mode.
+$arguments = '-batchmode -projectPath "{0}" -runTests -testPlatform EditMode -testResults "{1}" -logFile "{2}"' -f $project, $results, $log
 Write-Output "Testing package in fresh Unity project: $project"
 $process = Start-Process -FilePath $unity -ArgumentList $arguments -WindowStyle Hidden -PassThru
 $process.WaitForExit()

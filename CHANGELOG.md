@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- Grouped Telegraph under Effect with shared overlap lanes, creation menu and focused visual/audio inspector pages.
+
+- Added Action Flow nodes for Allow Exit, Branch and Complete, unified legacy flow display, shared request policy and playback completion boundaries.
+
+- Added Hierarchy bone-path copying and direct binding from the selected bone, with actor-relative path validation.
+
+- Reorganized collision authoring into Shape, Response and Feedback pages with shape-specific creation and focused feedback controls.
+- Added persistent Scene volume display, position/bounds/rotation editing and Undo-safe bone sample edits.
+- Aligned box height/rotation across Scene authoring and Demo collision queries; added contact signal integration.
+
+- Refined the project overview and user guide structure.
+
+- Fixed legacy read-only and empty action views overlapping the three-row toolbar. Asset selection now ends the current IMGUI pass and resets per-asset selection/scroll state before repainting.
+- Added asset-mode repaint regression; verification keeps graphics enabled in batch EditMode tests so the window can actually initialize.
+
 ## [0.2.0-preview.2] - 2026-09-13
 
 - Prepared the independent YCombatEditor source repository and versioned TGZ/source ZIP distribution.

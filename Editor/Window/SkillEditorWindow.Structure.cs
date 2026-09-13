@@ -5,19 +5,62 @@ using UnityEditor;
 using UnityEngine;
 public partial class SkillEditorWindow
 {
+    struct EffectSpan { public bool telegraph; public int index, start, end; }
+    readonly List<EffectSpan> effectSpans = new List<EffectSpan>();
+    readonly Dictionary<int,int> effectCombinedLanes = new Dictionary<int,int>();
+    readonly Dictionary<int,int> effectVisualLanes = new Dictionary<int,int>();
+    readonly Dictionary<int,int> effectTelegraphLanes = new Dictionary<int,int>();
+    int telegraphPage;
+
+    float UnifiedEffectHeight()
+    {
+        effectSpans.Clear(); effectVisualLanes.Clear(); effectTelegraphLanes.Clear();
+        for(int i=0;i<fxAndSoundList.Count;i++) { var f=fxAndSoundList[i]; if(f!=null)
+            effectSpans.Add(new EffectSpan {index=i,start=f.keyNumber,end=SegEnd(f.keyNumber,f.endKeyNumber)}); }
+        for(int i=0;i<warningCueList.Count;i++) { var w=warningCueList[i]; if(w!=null)
+            effectSpans.Add(new EffectSpan {telegraph=true,index=i,start=w.keyNumber,end=SegEnd(w.keyNumber,w.endKeyNumber)}); }
+        effectSpans.Sort((a,b)=>a.start.CompareTo(b.start));
+        AssignLanes(effectCombinedLanes,effectSpans,s=>s.start,s=>s.end);
+        for(int i=0;i<effectSpans.Count;i++) {
+            var span=effectSpans[i];
+            (span.telegraph?effectTelegraphLanes:effectVisualLanes)[span.index]=effectCombinedLanes[i];
+        }
+        return TRACK_HEIGHT*LaneCount(effectCombinedLanes);
+    }
+    void DrawUnifiedEffectTrack(Rect rect)
+    {
+        UnifiedEffectHeight(); int count=LaneCount(effectCombinedLanes);
+        GetDef(Global.TrackType.Fx).drawLanes(rect,effectVisualLanes,count);
+        GetDef(Global.TrackType.Warning).drawLanes(rect,effectTelegraphLanes,count);
+    }
+    void DrawTelegraphInspector(int index)
+    {
+        if(_serializedConfig==null || index<0 || index>=warningCueList.Count) return;
+        _serializedConfig.Update();
+        var list=_serializedConfig.FindProperty("warningCueList"); var item=list.GetArrayElementAtIndex(index);
+        EditorGUILayout.LabelField("Effect / Telegraph",EditorStyles.boldLabel);
+        if(GUILayout.Button("Remove")) { list.DeleteArrayElementAtIndex(index); ApplyInspectorProperties(); selType=SelType.None; selIdx=-1; return; }
+        CollisionFields(item,"keyNumber","endKeyNumber");
+        telegraphPage=GUILayout.Toolbar(telegraphPage,new[]{"Visual","Audio"});
+        if(telegraphPage==0) {
+            EditorGUILayout.PropertyField(item.FindPropertyRelative("warningVfx"),new GUIContent("Visual effect"));
+            if(item.FindPropertyRelative("warningVfx").objectReferenceValue!=null) CollisionFields(item,"vfxOffset","vfxRotation","vfxScale");
+        } else EditorGUILayout.PropertyField(item.FindPropertyRelative("warningSound"),new GUIContent("Audio clip"));
+        ApplyInspectorProperties();
+    }
     readonly Dictionary<int,int> motionLanes=new Dictionary<int,int>();
     readonly Dictionary<int,int> facingLanes=new Dictionary<int,int>();
     bool showAdvanced,showValidation;
     static string SelectionTitle(string list) => list switch {
         "animSegments"=>"Animation", "fxList"=>"Effect", "cameraCues"=>"Camera", "moveSegmentList"=>"Motion / Displacement",
-        "adjustMotionList"=>"Motion / Facing", "attackList"=>"Attack", "jumpList"=>"Transition", "interactionWindows"=>"Interaction",
-        "warningCueList"=>"Telegraph", "cancelList"=>"Cancel", "hitFxList"=>"Hit Effect", "trailToggleList"=>"Trail", _=>ObjectNames.NicifyVariableName(list) };
+        "adjustMotionList"=>"Motion / Facing", "attackList"=>"Collision", "jumpList"=>"Transition", "interactionWindows"=>"Interaction",
+        "warningCueList"=>"Effect / Telegraph", "cancelList"=>"Cancel", "hitFxList"=>"Hit Effect", "trailToggleList"=>"Trail", _=>ObjectNames.NicifyVariableName(list) };
     static string FieldLabel(string name,string fallback) => name switch {
         "keyNumber"=>"Start frame", "endKeyNumber"=>"End frame", "beginKey"=>"Start frame", "endKey"=>"End frame (exclusive)",
         "skillName"=>"Action name", "skillDescription"=>"Description", "ownerType"=>"Actor profile", "exitFrame"=>"Exit frame (0 = auto)",
         "skillCD"=>"Cooldown", "particleSystem"=>"Visual effect", "audioClip"=>"Audio clip", "followCharacter"=>"Follow actor",
         "allowTurning"=>"Allow target tracking", "targetKind"=>"Tracking target", "rotationSpeed"=>"Turn speed (deg/s)",
-        "maxDistance"=>"Distance limit", "space"=>"Direction", "isReWrite"=>"Override hit shape", "parameter1"=>"Radius / length", "parameter2"=>"Width", _=>fallback };
+        "maxDistance"=>"Distance limit", "space"=>"Direction", "isReWrite"=>"Override hit shape", "collisionName"=>"Name", "collisionRotation"=>"Rotation", "responseMode"=>"On contact", "contactSignal"=>"Signal", "damageMode"=>"Detection", "damageRatio"=>"Damage multiplier", "parameter1"=>"Radius / length", "parameter2"=>"Width", _=>fallback };
     static bool IsEssentialField(string list,string field){
         string fields=list switch {
             "attackList" or "phase2AttackList"=>"keyNumber endKeyNumber damageMode tickInterval damageRatio impactLevel isReWrite shapeType parameter1 parameter2 offset unblockable unparryable interactionTag",
@@ -59,7 +102,6 @@ public partial class SkillEditorWindow
     void ShowActionTools(){
         var menu=new GenericMenu();
         menu.AddItem(new GUIContent("Show advanced properties"),showAdvanced,()=>showAdvanced=!showAdvanced);
-        menu.AddItem(new GUIContent("Default hit shape"),false,()=>{selType=SelType.Hitbox;selIdx=-1;});
         menu.AddItem(new GUIContent("Actor settings"),false,()=>{selType=SelType.Enemy;selIdx=-1;});
         menu.AddSeparator("");menu.AddItem(new GUIContent("Restore backup"),false,RestoreCurrentConfig);
         if(configFile!=null&&ActionConfigMigrationService.NeedsMigration(configFile))menu.AddItem(new GUIContent("Upgrade schema with backup"),false,MigrateCurrentConfig);

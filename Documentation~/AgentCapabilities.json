@@ -290,5 +290,18 @@
     "consumer_scene_playback",
     "interruption_cleanup",
     "save_and_reopen"
-  ]
+  ],
+  "actionFlow": {
+    "field": "flowNodes",
+    "types": [
+      "AllowExit",
+      "Branch",
+      "Complete"
+    ],
+    "request": "ActionPlayer.TryRequestFlow",
+    "condition": "ActionFlowCondition",
+    "externalHost": "ActionFlow policy helpers; host activation and cleanup required",
+    "complete": "before same-frame gameplay events",
+    "legacy": "existing lists remain serialized and host-owned"
+  }
 }

@@ -81,15 +81,15 @@ public partial class SkillEditorWindow
 
         var atkDef=new TrackDef{
             type=Global.TrackType.Attack, selType=SelType.Attack, color=C_ATK,
-            name="Attack", itemName="Attack", menuLabel="Attack",
+            name="Collision", itemName="Collision", menuLabel="Collision",
             count=()=>atkList.Count, listCount=()=>atkList.Count,
             maxEnd=()=>MaxEnd(atkList,a=>a.keyNumber,a=>a.endKeyNumber)+TAIL,
-            addEvent=AddAtkHere, inspector=i=>InspAtk(atkList[i]),
+            addEvent=ShowCollisionAddMenu, inspector=i=>InspAtk(atkList[i]),
             removeAt=i=>RemoveEvent(atkList,i) };
         atkDef.lanes=buf=>AssignLanes(buf,atkList,a=>a.keyNumber,a=>SegEnd(a.keyNumber,a.endKeyNumber));
         atkDef.drawLanes=(r,l,c)=>DrawEventTrack(r,l,c,atkList,atkDef,
             a=>a.keyNumber,a=>SegEnd(a.keyNumber,a.endKeyNumber),
-            (a,b,e)=>b==e?a.keyNumber.ToString():$"{b}-{e}");
+            (a,b,e)=>(a.shapeType==1?"Box":"Sphere")+" / "+a.responseMode+" "+$"{b}-{e}",alwaysLabel:true);
 
         var fxDef=new TrackDef{
             type=Global.TrackType.Fx, selType=SelType.Fx, color=C_FX,
@@ -101,7 +101,9 @@ public partial class SkillEditorWindow
         fxDef.lanes=buf=>AssignLanes(buf,fxAndSoundList,f=>f.keyNumber,f=>SegEnd(f.keyNumber,f.endKeyNumber));
         fxDef.drawLanes=(r,l,c)=>DrawEventTrack(r,l,c,fxAndSoundList,fxDef,
             f=>f.keyNumber,f=>SegEnd(f.keyNumber,f.endKeyNumber),
-            (f,b,e)=>EffectAuthoring.Label(f),alwaysLabel:true);
+            (f,b,e)=>EffectAuthoring.Label(f),filter:f=>f!=null,alwaysLabel:true);
+        fxDef.count=()=>fxAndSoundList.Count+warningCueList.Count;
+        fxDef.lanes=null; fxDef.drawCustom=DrawUnifiedEffectTrack; fxDef.customHeight=UnifiedEffectHeight;
 
         var sndDef=new TrackDef{
             type=Global.TrackType.Sound, selType=SelType.Sound, color=C_SND,
@@ -139,7 +141,7 @@ public partial class SkillEditorWindow
         warnDef.lanes=buf=>AssignLanes(buf,warningCueList,w=>w.keyNumber,w=>SegEnd(w.keyNumber,w.endKeyNumber));
         warnDef.drawLanes=(r,l,c)=>DrawEventTrack(r,l,c,warningCueList,warnDef,
             w=>w.keyNumber,w=>SegEnd(w.keyNumber,w.endKeyNumber),
-            (w,b,e)=>b==e?"":$"{b}-{e}");
+            (w,b,e)=>"Telegraph: "+(w.warningVfx!=null?w.warningVfx.name:w.warningSound!=null?w.warningSound.name:"Choose effect"),filter:w=>w!=null,alwaysLabel:true);
 
         var cancelDef=new TrackDef{
             type=Global.TrackType.Cancel, selType=SelType.Cancel, color=C_CANCEL,
@@ -248,8 +250,11 @@ public partial class SkillEditorWindow
         cameraDef.lanes=buf=>AssignLanes(buf,cameraCues,c=>c.keyNumber,c=>c.endKeyNumber);
         cameraDef.drawLanes=(r,l,c)=>DrawEventTrack(r,l,c,cameraCues,cameraDef,
             cue=>cue.keyNumber,cue=>cue.endKeyNumber,(cue,b,e)=>cue.label,alwaysLabel:true);
+        var flowDef = new TrackDef { type=Global.TrackType.Flow, selType=SelType.Flow, name="Action Flow", itemName="Flow node", menuLabel="Action Flow", color=new Color(.6f,.68f,.9f),
+            count=()=>FlowCount,listCount=()=>flowNodes.Count,maxEnd=()=>MaxEnd(flowNodes,n=>n.keyNumber,n=>n.limitWindow?n.endKeyNumber:n.keyNumber)+TAIL,
+            addEvent=ShowFlowAddMenu,inspector=DrawFlowInspector,removeAt=i=>RemoveEvent(flowNodes,i),drawCustom=DrawFlowTrack,customHeight=FlowTrackHeight };
         return new List<TrackDef>{
-            cameraDef,animDef,atkDef,fxDef,sndDef,jumpDef,cancelDef,projDef,hitFxDef,
+            flowDef,cameraDef,animDef,atkDef,fxDef,sndDef,jumpDef,cancelDef,projDef,hitFxDef,
             moveDef,warnDef,saDef,amDef,trailDef,interactionDef };
     }
 
@@ -307,6 +312,7 @@ public partial class SkillEditorWindow
             _tracks.Add(new TrkInfo{ def=def, name=def.name,
                 height=h, lanes=lanes, laneCount=laneCount, expanded=exp, trackListIdx=ti });
         }
+        if (!seen.Contains(Global.TrackType.Flow) && FlowCount > 0) _tracks.Add(new TrkInfo { def=GetDef(Global.TrackType.Flow), name="Action Flow", height=flowExpanded?FlowTrackHeight():0,expanded=flowExpanded,trackListIdx=-1 });
         return _tracks;
     }
 
@@ -406,11 +412,11 @@ public partial class SkillEditorWindow
                 // ── [▼/▶] 展开/折叠按钮 ──
                 int ti=t.trackListIdx;
                 if(GUI.Button(new Rect(hr.xMax-48,hr.y+5,44,20),t.expanded?"Hide":"Show",EditorStyles.miniButton)){
-                    PushUndo(); trackList[ti].expanded=!trackList[ti].expanded;
+                    if(ti<0) flowExpanded=!flowExpanded; else { PushUndo(); trackList[ti].expanded=!trackList[ti].expanded; }
                 }
                 // 右键上下文菜单
                 if(Event.current.type==EventType.ContextClick&&hr.Contains(Event.current.mousePosition)){
-                    ShowTrackContextMenu(t.trackListIdx); Event.current.Use(); }
+                    if(t.trackListIdx>=0) ShowTrackContextMenu(t.trackListIdx); else ShowFlowAddMenu(); Event.current.Use(); }
             }
             y+=h;
         }
@@ -469,10 +475,15 @@ public partial class SkillEditorWindow
         if(ti<trackList.Count-1) menu.AddItem(new GUIContent("Move track down"),false,()=>{ PushUndo(); var tmp=trackList[ti]; trackList[ti]=trackList[ti+1]; trackList[ti+1]=tmp; });
         else menu.AddDisabledItem(new GUIContent("Move track down"));
         menu.AddSeparator("");
+        if(def!=null && def.type==Global.TrackType.Flow) {
+            menu.AddItem(new GUIContent("Collapse track"),false,()=>{PushUndo();foreach(var t in trackList) if(BuiltinTrackRegistry.Canonical(t.type)==Global.TrackType.Flow)t.expanded=false;flowExpanded=false;});
+            menu.ShowAsContext(); return;
+        }
         menu.AddItem(new GUIContent("Hide track"),false,()=>{
             if(EditorUtility.DisplayDialog("Hide track",$"Hide the {GetTrackDefaultName(trk.type)} track?\nEvents are preserved and remain active at runtime. Add the track again to edit them.","Remove","Cancel")){
                 PushUndo();
-                trackList.RemoveAt(ti);
+                if(BuiltinTrackRegistry.Canonical(trk.type)==Global.TrackType.Fx) trackList.RemoveAll(t=>BuiltinTrackRegistry.Canonical(t.type)==Global.TrackType.Fx);
+                else trackList.RemoveAt(ti);
             }
         });
         menu.ShowAsContext();

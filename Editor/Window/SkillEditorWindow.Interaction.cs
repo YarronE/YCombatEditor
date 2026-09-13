@@ -27,6 +27,7 @@ public partial class SkillEditorWindow
         _clipboardRefs.Clear();
         _clipboardType=selType;
         switch(selType){
+            case SelType.Flow: if(selIdx<flowNodes.Count) { var node=flowNodes[selIdx]; _clipboardJson=JsonUtility.ToJson(node); if(node.nextAction!=null) _clipboardRefs["nextAction"]=node.nextAction; if(node.conditions!=null) for(int i=0;i<node.conditions.Count;i++) _clipboardRefs["flowCondition"+i]=node.conditions[i]; } break;
             case SelType.Camera: if(selIdx<cameraCues.Count) _clipboardJson=JsonUtility.ToJson(cameraCues[selIdx]); break;
             case SelType.Interaction:
                 if(selIdx<interactionWindows.Count){
@@ -92,6 +93,7 @@ public partial class SkillEditorWindow
         PushUndo();
         int f=frameSelectIndex;
         switch(_clipboardType){
+            case SelType.Flow:{ var node=JsonUtility.FromJson<ActionFlowNode>(_clipboardJson); int span=node.endKeyNumber-node.keyNumber; node.keyNumber=f; node.endKeyNumber=f+Mathf.Max(0,span); if(_clipboardRefs.TryGetValue("nextAction",out var target)) node.nextAction=target as SkillConfigSO; if(node.conditions!=null) for(int i=0;i<node.conditions.Count;i++) if(_clipboardRefs.TryGetValue("flowCondition"+i,out var condition)) node.conditions[i]=condition as ActionFlowCondition; flowNodes.Add(node); selType=SelType.Flow; selIdx=flowNodes.Count-1; break; }
             case SelType.Camera:{ var cue=JsonUtility.FromJson<ActionCameraCue>(_clipboardJson); int span=cue.endKeyNumber-cue.keyNumber; cue.keyNumber=f; cue.endKeyNumber=f+Mathf.Max(0,span); cameraCues.Add(cue); selType=SelType.Camera; selIdx=cameraCues.Count-1; break; }
             case SelType.Interaction:{
                 var w=JsonUtility.FromJson<InteractionWindow>(_clipboardJson);
@@ -206,11 +208,12 @@ public partial class SkillEditorWindow
     /// <summary>检查剪贴板类型是否可以粘贴到指定轨道</summary>
     bool CanPasteToTrack(Global.TrackType trackType){
         if(!HasClipboard) return false;
+        if(BuiltinTrackRegistry.Canonical(trackType)==Global.TrackType.Flow) return _clipboardType==SelType.Flow || _clipboardType==SelType.Jump || _clipboardType==SelType.Cancel;
         var def=GetDef(trackType);
         // 位移曲线轨道没有可粘贴的 Event
         return def!=null&&def.removeAt!=null&&(def.selType==_clipboardType ||
             (BuiltinTrackRegistry.Canonical(trackType)==Global.TrackType.Fx &&
-             (_clipboardType==SelType.Fx || _clipboardType==SelType.Sound)));
+             (_clipboardType==SelType.Fx || _clipboardType==SelType.Sound || _clipboardType==SelType.Warning)));
     }
     #endregion
 
@@ -258,6 +261,8 @@ public partial class SkillEditorWindow
             int span=dragOrigEnd-dragOrigF;
             int nb=Mathf.Clamp(nf,0,totalF-Mathf.Max(span,0));
             switch(dragType){
+                case SelType.FlowEnd: if(configFile!=null) configFile.exitFrame=Mathf.Max(1,nb); break;
+                case SelType.Flow: if(dragIdx>=0&&dragIdx<flowNodes.Count){ flowNodes[dragIdx].keyNumber=nb; if(flowNodes[dragIdx].limitWindow) flowNodes[dragIdx].endKeyNumber=nb+Mathf.Max(0,span); } break;
                 case SelType.Camera: if(dragIdx>=0&&dragIdx<cameraCues.Count){cameraCues[dragIdx].keyNumber=nb;cameraCues[dragIdx].endKeyNumber=nb+Mathf.Max(0,span);} break;
                 case SelType.Interaction: if(dragIdx>=0&&dragIdx<interactionWindows.Count){
                     interactionWindows[dragIdx].keyNumber=nb; interactionWindows[dragIdx].endKeyNumber=nb+Mathf.Max(0,span); } break;
@@ -329,6 +334,7 @@ public partial class SkillEditorWindow
     void StartDrag(SelType t,int i,int f,int end=0){ isDraggingItem=true; dragType=t; dragIdx=i; dragOrigF=f; dragOrigEnd=end; }
     void RemoveEvent<T>(List<T> list,int idx){ PushUndo(); list.RemoveAt(idx); }
     void DelSel(){
+        if(selType==SelType.FlowEnd && configFile!=null) { PushUndo(); configFile.exitFrame=0; }
         // 原实现漏了「取消点 / 受击特效」两类，改为走注册表后全部覆盖
         var def=GetDefBySel(selType);
         if(def!=null&&def.removeAt!=null&&def.listCount!=null&&selIdx>=0&&selIdx<def.listCount())
@@ -364,6 +370,7 @@ public partial class SkillEditorWindow
         var menu=new GenericMenu();
         menu.AddItem(new GUIContent("Visual Effect"),false,AddFxHere);
         menu.AddItem(new GUIContent("Audio"),false,AddSndHere);
+        menu.AddItem(new GUIContent("Telegraph"),false,AddWarnHere);
         menu.ShowAsContext();
     }
     void AddFxHere(){ PushUndo(); fxAndSoundList.Add(new Global.FxAndSound{keyNumber=frameSelectIndex,contentKind=Global.EffectContentKind.VisualEffect}); selType=SelType.Fx; selIdx=fxAndSoundList.Count-1; }

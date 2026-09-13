@@ -14,4 +14,8 @@ Include Unity/package versions, a minimal reproduction and the first error with 
 
 For changes to tracks, subtype menus, buttons, properties, shortcuts, defaults or preview behavior, update `Documentation~/UserGuide.zh-CN.md` in the same change. Keep English control names identical to the UI, explain their usage in Chinese, and revise affected examples and limitations. Record user-visible changes in CHANGELOG.md. Review the guide against the implementation before handing off. Static CI checks that the guide exists; it does not verify semantic accuracy.
 
-General improvements developed in the action Demo must be synchronized to the standalone YCombatEditor source after testing and documentation updates. Port independent fixes back first. Preserve immutable versioned releases. Follow Documentation~/Maintenance.zh-CN.md and update ROADMAP.zh-CN.md when priorities change.
+General improvements developed in the action Demo must be synchronized to the standalone YCombatEditor source after testing and documentation updates. Port independent fixes back first. Preserve immutable versioned releases. Follow Documentation~/Maintenance.zh-CN.md and keep planning notes local when priorities change.
+
+## Documentation style
+
+README introduces the product, its capabilities and how to get started. User guides explain tasks and controls. Keep conversational context, implementation diaries, internal acceptance conclusions and maintainer-specific instructions out of these documents. Use migration notes and CHANGELOG for compatibility details, and maintenance documentation for release and synchronization procedures.

@@ -183,103 +183,20 @@ public partial class SkillEditorWindow
     #endregion
 
     #region SceneGUI
-    void OnSceneGUICallback(SceneView sv){ if(!IsPreviewAllowed) return; OnSceneGUI_Draw(sv); }
+    void OnSceneGUICallback(SceneView sv){ if(!Application.isPlaying && configFile!=null) OnSceneGUI_Draw(sv); }
     void OnSceneGUI_Draw(SceneView sv){
-        if(previewModel==null) return;
-        EnsurePreviewInstance(); var eff=GetEffectivePreviewModel(); if(eff==null) return;
-        // 保存矩阵，确保任何异常路径都能恢复
-        var savedHandlesMatrix=Handles.matrix;
-        try{
-        var l2w=eff.transform.localToWorldMatrix;
-
-        // ── 收集当前帧范围内所有活跃的攻击判定 ──
-        var activeAtks=FindActiveAttacks(frameSelectIndex);
-
-        // ── 特效位置 Gizmo + Handle（在 Scene 中直接调整特效偏移） ──
-        DrawFxSceneHandles(eff,l2w);
-
-        // ── 位移段可视化（方向/目标点/落点/范围圈/偏移 Handle） ──
-        DrawMoveSegmentSceneHandles(eff,l2w);
-
-        // ── 选中的攻击 (可交互操控 Handle) ──
-        int selAtkIdx=(selType==SelType.Attack&&selIdx>=0&&selIdx<atkList.Count)?selIdx:-1;
-
-
-        if(activeAtks.Count==0) return;
-
-        // ── 绘制所有活跃攻击的判定框 ──
-        for(int ai=0;ai<activeAtks.Count;ai++){
-            int aidx=activeAtks[ai]; var a=atkList[aidx];
-            bool isSel=aidx==selAtkIdx;
-            bool rw=a.isReWrite;
-
-            // 计算判定框参数 — 支持骨骼跟踪模式
-            IJudgeArea area;
-            Vector3 curOffset;
-            if(!rw){ curOffset=new Vector3(offsetX,offsetY,offsetZ);
-                switch(skillShapeSelectIndex){
-                case 1: area=boxItem; area.SetValue(range1,1,range2,curOffset.x,curOffset.y,curOffset.z); break;
-                default: area=sphereItem; area.SetValue(range1,0,0,curOffset.x,curOffset.y,curOffset.z); break; }
-            }else{
-                // 骨骼跟踪模式：根据当前帧从boneOffsets取偏移
-                curOffset=a.GetOffsetAtFrame(frameSelectIndex);
-                switch(a.shapeType){
-                case 1: area=boxItem; area.SetValue(a.parameter1,1,a.parameter2,curOffset.x,curOffset.y,curOffset.z); break;
-                default: area=sphereItem; area.SetValue(a.parameter1,0,0,curOffset.x,curOffset.y,curOffset.z); break; } }
-
-            Handles.matrix=Matrix4x4.TRS(l2w.MultiplyPoint3x4(Vector3.zero),l2w.rotation,l2w.lossyScale);
-
-            // 选中的用亮红色，非选中的用半透明橙色
-            Color fillCol=isSel?new Color(1,0,0,.25f):new Color(1,.5f,0,.12f);
-            Color wireCol=isSel?new Color(1,0,0,.8f):new Color(1,.5f,0,.4f);
-            HandlesDrawTool.H.PushColor(fillCol); HandlesDrawTool.H.isFill=true;
-            switch(area){ case BoxItem v: HandlesDrawTool.H.DrawBox(v.size,Matrix4x4.Translate(v.offset)); break;
-                case SphereItem v: HandlesDrawTool.H.DrawSphere(v.radius,Matrix4x4.Translate(v.offset)); break; }
-            HandlesDrawTool.H.isFill=false; HandlesDrawTool.H.PopColor();
-            // 线框
-            HandlesDrawTool.H.PushColor(wireCol);
-            switch(area){ case BoxItem v: HandlesDrawTool.H.DrawBox(v.size,Matrix4x4.Translate(v.offset)); break;
-                case SphereItem v: HandlesDrawTool.H.DrawSphere(v.radius,Matrix4x4.Translate(v.offset)); break; }
-            HandlesDrawTool.H.PopColor();
-
-            // 帧标签
-            Vector3 labelWorldPos;
-            switch(area){ case BoxItem v: labelWorldPos=l2w.MultiplyPoint3x4(v.offset+Vector3.up*v.size.y*0.5f); break;
-                case SphereItem v: labelWorldPos=l2w.MultiplyPoint3x4(v.offset+Vector3.up*v.radius); break;
-                default: labelWorldPos=l2w.MultiplyPoint3x4(Vector3.zero); break; }
-            string fLabel=a.endKeyNumber>a.keyNumber?$"Atk[{aidx}] F{a.keyNumber}-{a.endKeyNumber}":$"Atk[{aidx}] F{a.keyNumber}";
-            EnsureSceneLabelStyles();
-            if(_sceneLabelStyle!=null&&_sceneSelLabelStyle!=null)
-                Handles.Label(labelWorldPos,fLabel,isSel?_sceneSelLabelStyle:_sceneLabelStyle);
-
-            // 仅选中的攻击可以操控 Handle
-            if(isSel){
-                _judgment.value=area;
-                DrawHandle(area);
+        if(configFile==null || Application.isPlaying) return;
+        GameObject actor=null;
+        if(previewModel!=null){EnsurePreviewInstance();actor=GetEffectivePreviewModel();}
+        if(actor!=null && IsPreviewAllowed){
+            var matrix=actor.transform.localToWorldMatrix;
+            using(new Handles.DrawingScope(Handles.color, Handles.matrix)){
+                DrawFxSceneHandles(actor,matrix);
+                DrawMoveSegmentSceneHandles(actor,matrix);
             }
         }
-
-        // ── 重置 Handles.matrix，防止污染后续 Unity 渲染 ──
-        Handles.matrix=Matrix4x4.identity;
-
-        // ── 聚焦功能 — 按F键聚焦到选中攻击判定框 ──
-        if(selAtkIdx>=0&&Event.current.type==EventType.KeyDown&&Event.current.keyCode==KeyCode.F){
-            var a=atkList[selAtkIdx];
-            Vector3 center; float size;
-            if(a.isReWrite){
-                center=l2w.MultiplyPoint3x4(a.GetOffsetAtFrame(frameSelectIndex));
-                size=a.shapeType==0?a.parameter1*2.5f:Mathf.Max(a.parameter1,a.parameter2)*2.5f;
-            }else{
-                center=l2w.MultiplyPoint3x4(new Vector3(offsetX,offsetY,offsetZ));
-                size=skillShapeSelectIndex==0?range1*2.5f:Mathf.Max(range1,range2)*2.5f;
-            }
-            size=Mathf.Max(size,1f);
-            sv.LookAt(center,sv.rotation,size);
-            Event.current.Use();
-        }
-        }finally{ Handles.matrix=savedHandlesMatrix; }
+        DrawCollisionScene(actor!=null?actor.transform:null);
     }
-
 
     // Scene标签样式（延迟初始化）
     static GUIStyle _sceneLabelStyle, _sceneSelLabelStyle;
@@ -530,40 +447,6 @@ public partial class SkillEditorWindow
             _sceneSelFxLabelStyle.normal.textColor=new Color(0.3f,1f,0.5f,1f);
             _sceneSelFxLabelStyle.fontSize=11;
         }
-    }
-    void DrawHandle(IJudgeArea config){
-        // 保存当前矩阵，Handle 操控在自定义矩阵下进行（使偏移值为模型局部坐标）
-        var savedMatrix=Handles.matrix;
-        Vector3 off=Vector3.zero,sz=Vector3.one;
-        switch(config){ case BoxItem v: off=v.offset; sz=v.size; break; case SphereItem v: off=v.offset; sz=new Vector2(v.radius,0); break; }
-        float hs=HandleUtility.GetHandleSize(off);
-        switch(Tools.current){
-            case Tool.Move: off=Handles.DoPositionHandle(off,Quaternion.identity); break;
-            case Tool.Scale: sz=Handles.DoScaleHandle(sz,off,Quaternion.identity,hs); break;
-            case Tool.Rect: switch(config){
-                case BoxItem v: boxHandle.axes=PrimitiveBoundsHandle.Axes.X|PrimitiveBoundsHandle.Axes.Z; boxHandle.center=off; boxHandle.size=sz;
-                    boxHandle.DrawHandle(); off=boxHandle.center; sz=boxHandle.size; break;
-                case SphereItem v: sphereHandle.axes=PrimitiveBoundsHandle.Axes.X|PrimitiveBoundsHandle.Axes.Y|PrimitiveBoundsHandle.Axes.Z;
-                    sphereHandle.center=off; sphereHandle.radius=sz.x; sphereHandle.DrawHandle(); off=sphereHandle.center; sz.x=sphereHandle.radius; break;
-            } break;
-        }
-        // 恢复矩阵
-        Handles.matrix=savedMatrix;
-        // 判断当前选中的攻击是否独立编辑
-        bool isRW=selType==SelType.Attack&&selIdx>=0&&selIdx<atkList.Count&&atkList[selIdx].isReWrite;
-        switch(config){
-            case BoxItem v: v.offset=off; v.size=sz;
-                if(!isRW){ offsetX=v.offset.x; offsetY=v.offset.y; offsetZ=v.offset.z; range1=v.size.x; range2=v.size.z; }
-                else UpdateAtkScene(v.size.x,v.size.z,v.offset); break;
-            case SphereItem v: v.offset=off; v.radius=sz.x;
-                if(!isRW){ offsetX=v.offset.x; offsetY=v.offset.y; offsetZ=v.offset.z; range1=v.radius; }
-                else UpdateAtkScene(v.radius,0,v.offset); break;
-        }
-    }
-    void UpdateAtkScene(float p1,float p2,Vector3 o){
-        // 优先使用选中的攻击，否则用范围查找
-        int i=(selType==SelType.Attack&&selIdx>=0&&selIdx<atkList.Count)?selIdx:FindKeyIndex(frameSelectIndex);
-        if(i>=0){ atkList[i].offset=o; atkList[i].parameter1=p1; atkList[i].parameter2=p2; }
     }
     #endregion
 

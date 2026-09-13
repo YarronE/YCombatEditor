@@ -27,6 +27,19 @@ public partial class SkillEditorWindow
         LoadConfig();
         Selection.activeObject=asset;
     }
+    void SelectConfig(SkillConfigSO selected){
+        StopPreviewSession();
+        _editGesture.Complete();
+        CommitDeferredChanges();
+        configFile=selected;
+        inspScrollPos=Vector2.zero;
+        timelineScrollPos=Vector2.zero;
+        selType=SelType.None;selIdx=-1;
+        isDraggingItem=isDraggingSegment=isDraggingSegEdge=false;
+        if(configFile!=null)LoadConfig();
+        else { _serializedConfig=null;RefreshValidation(); }
+        Repaint();
+    }
     void LoadConfig(){
         StopPreviewSession();
         _editGesture.Complete();
@@ -44,6 +57,7 @@ public partial class SkillEditorWindow
 
     void RefreshConfigBindings(){
         if(configFile==null) return;
+        flowNodes=configFile.flowNodes??new List<ActionFlowNode>();
         cameraCues=configFile.cameraCues??new List<ActionCameraCue>();
         warningCueList=configFile.warningCueList??new List<Global.WarningCue>();
         jumpList=configFile.jumpList??new List<Global.Jump>();
@@ -86,6 +100,7 @@ public partial class SkillEditorWindow
 
     void BindListsToConfig(){
         if(configFile==null) return;
+        if(!ReferenceEquals(configFile.flowNodes,flowNodes)) configFile.flowNodes=flowNodes;
         if(!ReferenceEquals(configFile.cameraCues,cameraCues)) configFile.cameraCues=cameraCues;
         if(!ReferenceEquals(configFile.warningCueList,warningCueList)) configFile.warningCueList=warningCueList;
         if(!ReferenceEquals(configFile.jumpList,jumpList)) configFile.jumpList=jumpList;

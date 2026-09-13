@@ -42,7 +42,7 @@ namespace Ethan.ActionEditor
         public bool AllowLegacyEmptyFx { get; set; }
     }
 
-    public static class ActionConfigValidator
+    public static partial class ActionConfigValidator
     {
         public static List<ActionValidationIssue> Validate(
             SkillConfigSO config,
@@ -66,12 +66,15 @@ namespace Ethan.ActionEditor
                     if (segment?.clip != null && !Mathf.Approximately(firstRate, ActionTiming.SourceRate(segment)))
                     { issues.Add(new ActionValidationIssue("ACT152", ActionValidationSeverity.Warning, "Timing", -1, "Legacy mixed clip FPS: preview and host timing may differ. Explicit migration required.")); break; }
             }
+            ValidateFlow(config, issues);
             int lastExecutableFrame = config.exitFrame > 0 ? config.exitFrame : -1;
             ValidateAnimation(config, capabilities, lastExecutableFrame, issues);
             ValidateRangeList(config.jumpList, "Jump", (x) => x.beginKey, (x) => x.endKey, true, issues, lastExecutableFrame);
             // Most legacy tracks intentionally treat end <= start as a one-frame event.
             // Keep that serialized contract so productization does not invalidate old assets.
             ValidateRangeList(config.attackList, "Attack", (x) => x.keyNumber, (x) => x.endKeyNumber, false, issues, lastExecutableFrame);
+            ValidateCollisionGeometry(config.attackList, "Attack", issues);
+            ValidateCollisionGeometry(config.phase2AttackList, "Phase2Attack", issues);
             ValidateRangeList(config.fxList, "FxAndSound", (x) => x.keyNumber, (x) => x.endKeyNumber, false, issues, lastExecutableFrame);
             ValidateRangeList(config.cancelList, "CancelPoint", (x) => x.keyNumber, (x) => x.endKeyNumber, false, issues, lastExecutableFrame);
             ValidateRangeList(config.projectileList, "Projectile", (x) => x.keyNumber, (x) => x.endKeyNumber, false, issues, lastExecutableFrame);
@@ -241,6 +244,21 @@ namespace Ethan.ActionEditor
                 int effectiveEnd = end > start ? end : start;
                 if (lastExecutableFrame >= 0 && (start > lastExecutableFrame || effectiveEnd > lastExecutableFrame))
                     issues.Add(Error("ACT116", track, i, "Event is outside the configured exit frame."));
+            }
+        }
+
+        static void ValidateCollisionGeometry(List<Global.Attack> collisions, string track, List<ActionValidationIssue> issues)
+        {
+            if (collisions == null) return;
+            for (int i = 0; i < collisions.Count; i++) {
+                var c = collisions[i]; if (c == null) continue;
+                if (c.shapeType < 0 || c.shapeType > 1 || !Finite(c.parameter1) || !Finite(c.parameter2) || !Finite(c.boxHeight) ||
+                    !Finite(c.offset) || !Finite(c.collisionRotation) || c.boxHeight <= 0 ||
+                    (c.isReWrite && (c.parameter1 <= 0 || (c.shapeType == 1 && c.parameter2 <= 0))))
+                    issues.Add(Error("ACT164", track, i, "Collision dimensions must be positive and finite; offset and rotation must be finite."));
+                if (c.responseMode != Global.CollisionResponseMode.Damage && c.responseMode != Global.CollisionResponseMode.Signal ||
+                    c.responseMode == Global.CollisionResponseMode.Signal && string.IsNullOrWhiteSpace(c.contactSignal))
+                    issues.Add(Error("ACT165", track, i, "Select a collision response and provide a nonempty contact signal for Signal mode."));
             }
         }
 

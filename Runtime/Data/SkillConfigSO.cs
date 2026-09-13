@@ -15,7 +15,9 @@ public class SkillConfigSO : ScriptableObject
     public List<Ethan.ActionEditor.ActionPhaseMarker> phases = new List<Ethan.ActionEditor.ActionPhaseMarker>();
     [Min(1)] public float timelineFrameRate = 30f;
     public bool UsesExplicitTiming => timingVersion == 1;
-    public int RuntimeEndFrame => exitFrame > 0 ? exitFrame : UsesExplicitTiming ? Ethan.ActionEditor.ActionTiming.ContentEnd(this) : TotalTimelineFrames;
+    public System.Collections.Generic.List<Ethan.ActionEditor.ActionFlowNode> flowNodes = new System.Collections.Generic.List<Ethan.ActionEditor.ActionFlowNode>();
+    public int RuntimeEndFrame => Ethan.ActionEditor.ActionFlow.CompleteFrame(this) >= 0 ? Mathf.Min(NaturalRuntimeEndFrame, Ethan.ActionEditor.ActionFlow.CompleteFrame(this)) : NaturalRuntimeEndFrame;
+    public int NaturalRuntimeEndFrame => exitFrame > 0 ? exitFrame : UsesExplicitTiming ? Ethan.ActionEditor.ActionTiming.ContentEnd(this) : TotalTimelineFrames;
 
     public void InitializeExplicitTiming(float framesPerSecond = 30f)
     {

@@ -45,6 +45,7 @@ namespace Ethan.ActionEditor
         public static int ContentEnd(SkillConfigSO c)
         {
             int end = AnimationEnd(c);
+            end = Max(end, c.flowNodes, x => x.limitWindow && x.kind != ActionFlowKind.Complete ? Mathf.Max(x.keyNumber, x.endKeyNumber) : x.keyNumber);
             end = Max(end, c.attackList, x => Mathf.Max(x.keyNumber, x.endKeyNumber));
             end = Max(end, c.phase2AttackList, x => Mathf.Max(x.keyNumber, x.endKeyNumber));
             end = Max(end, c.cameraCues, x => Mathf.Max(x.keyNumber, x.endKeyNumber));

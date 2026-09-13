@@ -20,6 +20,7 @@ public partial class SkillEditorWindow
         EditorGUIUtility.labelWidth=160;
         DrawValidationSummary();
         switch(selType){
+            case SelType.FlowEnd: DrawLegacyFlowEnd(); break;
             case SelType.Basic: InspBasic(); break;
             case SelType.Hitbox: InspHitbox(); break;
             case SelType.Enemy: InspEnemy(); break;
@@ -64,6 +65,7 @@ public partial class SkillEditorWindow
     void LocateValidationIssue(ActionValidationIssue issue){
         selIdx=issue.EventIndex;
         switch(issue.Track){
+            case "Flow": selType=SelType.Flow; break;
             case "Camera": selType=SelType.Camera; break;
             case "Animation": selType=SelType.AnimSegment; break;
             case "Attack": selType=SelType.Attack; break;

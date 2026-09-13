@@ -128,7 +128,7 @@ public partial class SkillEditorWindow : EditorWindow
     bool isDraggingSegment; int dragSegIdx=-1;
     bool isDraggingSegEdge; int segEdgeIdx=-1, segEdgeSide;
     int segOrigClipStart,segOrigClipEnd,segOrigTimelineStart;
-    enum SelType{None,Attack,Fx,Sound,Jump,Warning,Cancel,Basic,Hitbox,Move,Enemy,AnimSegment,Projectile,HitFx,SuperArmor,AdjustMotion,TrailToggle,Phase2Attack,Phase2Fx,Interaction,Camera}
+    enum SelType{None,Attack,Fx,Sound,Jump,Warning,Cancel,Basic,Hitbox,Move,Enemy,AnimSegment,Projectile,HitFx,SuperArmor,AdjustMotion,TrailToggle,Phase2Attack,Phase2Fx,Interaction,Camera,Flow,FlowEnd}
     SelType selType=SelType.None; int selIdx=-1;
     Vector2 inspScrollPos;
 
@@ -212,17 +212,20 @@ public partial class SkillEditorWindow : EditorWindow
     }
 
     #region 主GUI
+    Rect GetContentRect() => new Rect(0, TOOLBAR_HEIGHT, position.width, Mathf.Max(0, position.height - TOOLBAR_HEIGHT));
     void OnGUI(){
         _totalFramesCache=-1; // 每次重绘重算一次总帧数，帧内复用
         DrawToolbar();
-        if(configFile==null){ GUILayout.FlexibleSpace();
+        if(configFile==null){ using(new GUILayout.AreaScope(GetContentRect())){
+            GUILayout.FlexibleSpace();
             EditorGUILayout.HelpBox("Create a new action or select an existing asset to begin.",MessageType.None);
-            GUILayout.FlexibleSpace(); return; }
+            GUILayout.FlexibleSpace(); } return; }
         if(ActionConfigMigrationService.NeedsMigration(configFile)){
-            GUILayout.Space(28);
+            using(new GUILayout.AreaScope(GetContentRect())){
             EditorGUILayout.HelpBox($"{configFile.name} uses a legacy schema and is read-only. Choose Tools > Upgrade schema with backup to edit it.",MessageType.None);
             EditorGUILayout.ObjectField("Action asset",configFile,typeof(SkillConfigSO),false);
             DrawReadOnlyConfig();
+            }
             return;
         }
         PrepareUndoForCurrentEvent();

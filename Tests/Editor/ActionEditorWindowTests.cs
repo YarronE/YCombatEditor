@@ -5,6 +5,7 @@ using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
 namespace Ethan.ActionEditor.Editor.Tests
@@ -25,6 +26,23 @@ namespace Ethan.ActionEditor.Editor.Tests
             window.configFile = config;
         }
 
+        [TestCase(ActionFlowKind.AllowExit)]
+        [TestCase(ActionFlowKind.Branch)]
+        [TestCase(ActionFlowKind.Complete)]
+        public void FlowCreationCopyAndUndoPreserveTheNodeKind(ActionFlowKind kind)
+        {
+            Invoke("LoadConfig"); Set("frameSelectIndex",12);
+            Invoke("AddFlowNode",kind); Invoke("CommitDeferredChanges");
+            Assert.That(config.flowNodes.Count,Is.EqualTo(1));
+            Assert.That(config.flowNodes[0].limitWindow,Is.False);
+            Undo.FlushUndoRecordObjects(); Undo.IncrementCurrentGroup();
+            Invoke("CopySelected"); Set("frameSelectIndex",24); Invoke("PasteClipboard"); Invoke("CommitDeferredChanges");
+            Assert.That(config.flowNodes.Count,Is.EqualTo(2));
+            Assert.That(config.flowNodes[1].kind,Is.EqualTo(kind));
+            Assert.That(config.flowNodes[1].keyNumber,Is.EqualTo(24));
+            Invoke("UndoLatest"); Assert.That(config.flowNodes.Count,Is.EqualTo(1));
+        }
+
         [TearDown]
         public void TearDown()
         {
@@ -32,6 +50,36 @@ namespace Ethan.ActionEditor.Editor.Tests
             Object.DestroyImmediate(window);
             Undo.ClearUndo(config);
             Object.DestroyImmediate(config);
+        }
+
+        [Test]
+        public void BoneBindingUsesActorRelativePathRejectsOutsideBonesAndSupportsUndo()
+        {
+            var sceneRoot = new GameObject("Scene Group");
+            var actor = new GameObject("Actor");
+            var bone = new GameObject("Hand");
+            var unrelated = new GameObject("Other Actor Bone");
+            try
+            {
+                actor.transform.SetParent(sceneRoot.transform);
+                bone.transform.SetParent(actor.transform);
+                config.attackList.Add(new Global.Attack { trackBonePath = "Original" });
+                Invoke("LoadConfig");
+                window.previewModel = actor;
+                Invoke("BindCollisionBone", config.attackList[0], unrelated.transform);
+                Assert.That(config.attackList[0].trackBonePath, Is.EqualTo("Original"));
+                Invoke("BindCollisionBone", config.attackList[0], bone.transform);
+                Assert.That(config.attackList[0].trackBonePath, Is.EqualTo("Hand"));
+                Undo.FlushUndoRecordObjects();
+                Undo.PerformUndo();
+                Assert.That(config.attackList[0].trackBonePath, Is.EqualTo("Original"));
+            }
+            finally
+            {
+                window.previewModel = null;
+                Object.DestroyImmediate(sceneRoot);
+                Object.DestroyImmediate(unrelated);
+            }
         }
 
         [TestCase("Attack", "attackList", "atkList", "keyNumber", "endKeyNumber")]
@@ -101,6 +149,46 @@ namespace Ethan.ActionEditor.Editor.Tests
             Assert.That(config.moveSegmentList[1].curve.keys, Is.EqualTo(config.moveSegmentList[0].curve.keys));
             Invoke("UndoLatest");
             Assert.That(config.moveSegmentList.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void TelegraphAndEffectTracksShareHeaderAndAvoidOverlappingLanes()
+        {
+            config.tracks.Add(new Global.SkillTrack{type=Global.TrackType.Fx,expanded=true});
+            config.tracks.Add(new Global.SkillTrack{type=Global.TrackType.Warning,expanded=true});
+            config.tracks.Add(new Global.SkillTrack{type=Global.TrackType.Sound,expanded=true});
+            config.fxList.Add(new Global.FxAndSound{keyNumber=0,endKeyNumber=10});
+            config.warningCueList.Add(new Global.WarningCue{keyNumber=5,endKeyNumber=8});
+            Invoke("LoadConfig");
+            var tracks=(IList)typeof(SkillEditorWindow).GetMethod("BuildTracks",Private).Invoke(window,null);
+            Assert.That(tracks.Count,Is.EqualTo(1));
+            Invoke("UnifiedEffectHeight");
+            var visual=(System.Collections.Generic.Dictionary<int,int>)Get("effectVisualLanes");
+            var telegraph=(System.Collections.Generic.Dictionary<int,int>)Get("effectTelegraphLanes");
+            Assert.That(visual[0],Is.Not.EqualTo(telegraph[0]));
+            Assert.That(config.tracks.Count,Is.EqualTo(3),"Grouping must not rewrite serialized legacy track IDs.");
+            config.tracks.RemoveAll(t=>t.type!=Global.TrackType.Warning);
+            tracks=(IList)typeof(SkillEditorWindow).GetMethod("BuildTracks",Private).Invoke(window,null);
+            Assert.That(tracks.Count,Is.EqualTo(1),"A legacy Telegraph-only layout still exposes Effect.");
+        }
+
+        [Test]
+        public void TelegraphClipboardPastesOnEffectWithReferencesAndUndo()
+        {
+            var sound=AudioClip.Create("Telegraph test",16,1,8000,false);
+            try {
+                Invoke("LoadConfig"); Set("frameSelectIndex",4); Invoke("AddWarnHere");
+                config.warningCueList[0].warningSound=sound;
+                Invoke("CommitDeferredChanges"); Undo.FlushUndoRecordObjects(); Undo.IncrementCurrentGroup();
+                Invoke("CopySelected");
+                var canPaste=typeof(SkillEditorWindow).GetMethod("CanPasteToTrack",Private);
+                Assert.That(canPaste.Invoke(window,new object[]{Global.TrackType.Fx}),Is.EqualTo(true));
+                Assert.That(canPaste.Invoke(window,new object[]{Global.TrackType.Attack}),Is.EqualTo(false));
+                Set("frameSelectIndex",12); Invoke("PasteClipboard"); Invoke("CommitDeferredChanges");
+                Assert.That(config.warningCueList[1].keyNumber,Is.EqualTo(12));
+                Assert.That(config.warningCueList[1].warningSound,Is.SameAs(sound));
+                Invoke("UndoLatest"); Assert.That(config.warningCueList.Count,Is.EqualTo(1));
+            } finally { Object.DestroyImmediate(sound); }
         }
 
         [TestCase("AddFxHere", Global.EffectContentKind.VisualEffect)]
@@ -385,6 +473,104 @@ namespace Ethan.ActionEditor.Editor.Tests
             EditorGUIUtility.editingTextField=true;
             try { Invoke("HandleGlobalInput",new Event { type=EventType.KeyDown,keyCode=KeyCode.Space }); Assert.IsFalse((bool)Get("playFrame")); }
             finally { EditorGUIUtility.editingTextField=false; }
+        }
+
+        [TestCase(900,600)]
+        [TestCase(1360,680)]
+        [TestCase(2100,900)]
+        public void ReadOnlyAndEmptyContentStayBelowAllToolbarRows(float width,float height)
+        {
+            window.position=new Rect(0,0,width,height);
+            var rect=(Rect)typeof(SkillEditorWindow).GetMethod("GetContentRect",Private).Invoke(window,null);
+            Assert.That(rect.yMin,Is.EqualTo(82));
+            Assert.That(rect.yMax,Is.EqualTo(window.position.height));
+            Assert.That(rect.width,Is.EqualTo(window.position.width));
+        }
+
+        [UnityTest]
+        public IEnumerator SwitchingAssetModesRepaintsWithoutLayoutErrors()
+        {
+            var legacy=ScriptableObject.CreateInstance<SkillConfigSO>();
+            try {
+                window.position=new Rect(0,0,1360,680);window.Show();
+                foreach(var selected in new[]{config,legacy,null,legacy,config}) {
+                    Invoke("SelectConfig",new object[]{selected});
+                    window.Repaint();yield return null;yield return null;
+                    LogAssert.NoUnexpectedReceived();
+                }
+            } finally {window.Close();Object.DestroyImmediate(legacy);}
+        }
+
+        [Test]
+        public void SelectionBetweenEditableLegacyAndEmptyResetsViewWithoutMutatingAssets()
+        {
+            var legacy=ScriptableObject.CreateInstance<SkillConfigSO>();
+            try {
+                string before=EditorJsonUtility.ToJson(legacy);
+                Invoke("LoadConfig");
+                Set("inspScrollPos",new Vector2(0,700));Set("isDraggingItem",true);
+                Invoke("SelectConfig",legacy);
+                Assert.That(window.configFile,Is.SameAs(legacy));
+                Assert.That(((SerializedObject)Get("_serializedConfig")).targetObject,Is.SameAs(legacy));
+                Assert.That(Get("inspScrollPos"),Is.EqualTo(Vector2.zero));
+                Assert.That(Get("isDraggingItem"),Is.False);
+                Assert.That(EditorJsonUtility.ToJson(legacy),Is.EqualTo(before));
+                Invoke("SelectConfig",new object[]{null});
+                Assert.That(window.configFile,Is.Null);Assert.That(Get("_serializedConfig"),Is.Null);
+                Invoke("SelectConfig",config);
+                Assert.That(((SerializedObject)Get("_serializedConfig")).targetObject,Is.SameAs(config));
+                Assert.That(EditorJsonUtility.ToJson(legacy),Is.EqualTo(before));
+            } finally {Object.DestroyImmediate(legacy);}
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        public void CollisionCreationAndSceneGeometryEditsRetainResponseThroughUndo(int shape)
+        {
+            Invoke("LoadConfig"); Set("frameSelectIndex", 8); Invoke("AddCollision", shape); Invoke("CommitDeferredChanges");
+            var c = config.attackList[0];
+            Assert.That(c.shapeType, Is.EqualTo(shape)); Assert.That(c.endKeyNumber, Is.EqualTo(13));
+            c.damageRatio = 3f;
+            Undo.FlushUndoRecordObjects(); Undo.IncrementCurrentGroup();
+            Invoke("ApplyCollisionGeometryEdit", c, new Vector3(2,3,4), new Vector3(3,4,5), new Vector3(0,45,0));
+            Assert.That(c.offset, Is.EqualTo(new Vector3(2,3,4)));
+            Assert.That(c.damageRatio, Is.EqualTo(3f));
+            if (shape == 1) { Assert.That(c.boxHeight, Is.EqualTo(4)); Assert.That(c.collisionRotation.y, Is.EqualTo(45)); }
+            Invoke("UndoLatest");
+            Assert.That(config.attackList[0].offset, Is.EqualTo(new Vector3(0,1,1)));
+            Invoke("RedoLatest");
+            Assert.That(config.attackList[0].offset, Is.EqualTo(new Vector3(2,3,4)));
+            Invoke("CopySelected"); Set("frameSelectIndex", 20); Invoke("PasteClipboard"); Invoke("CommitDeferredChanges");
+            Assert.That(config.attackList[1].damageRatio, Is.EqualTo(3f));
+            Assert.That(config.attackList[1].boxHeight, Is.EqualTo(config.attackList[0].boxHeight));
+            Assert.That(config.attackList[1].collisionRotation, Is.EqualTo(config.attackList[0].collisionRotation));
+        }
+
+        [Test]
+        public void CollisionBoneHandleEditsOnlyCurrentSample()
+        {
+            config.attackList.Add(new Global.Attack { keyNumber = 2, endKeyNumber = 4, useBoneTracking = true,
+                boneOffsets = new System.Collections.Generic.List<Vector3> { Vector3.zero, Vector3.one, Vector3.right } });
+            Invoke("LoadConfig"); Set("frameSelectIndex", 3);
+            var c = config.attackList[0];
+            Invoke("ApplyCollisionGeometryEdit", c, Vector3.up * 3, Vector3.one, Vector3.zero);
+            Assert.That(c.boneOffsets[0], Is.EqualTo(Vector3.zero));
+            Assert.That(c.boneOffsets[1], Is.EqualTo(Vector3.up * 3));
+            Assert.That(c.boneOffsets[2], Is.EqualTo(Vector3.right));
+            Assert.That(c.offset, Is.EqualTo(Vector3.zero));
+            Invoke("UndoLatest");
+            Assert.That(config.attackList[0].boneOffsets[1], Is.EqualTo(Vector3.one));
+        }
+
+        [Test]
+        public void SelectedCollisionRemainsAvailableOutsideItsWindowAndWithUnrelatedErrors()
+        {
+            Invoke("LoadConfig"); Invoke("AddCollision", 1); Invoke("CommitDeferredChanges");
+            config.fxList.Add(new Global.FxAndSound()); Invoke("RefreshValidation");
+            Set("frameSelectIndex", 100);
+            var selected = typeof(SkillEditorWindow).GetProperty("SelectedCollision", Private).GetValue(window);
+            Assert.That(selected, Is.SameAs(config.attackList[0]));
+            Assert.That((int)Get("_validationErrorCount"), Is.GreaterThan(0));
         }
 
         void Invoke(string method, params object[] arguments) => typeof(SkillEditorWindow).GetMethod(method, Private).Invoke(window, arguments);

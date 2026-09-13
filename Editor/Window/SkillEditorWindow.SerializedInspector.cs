@@ -54,6 +54,10 @@ public partial class SkillEditorWindow
 
     void DrawSerializedSelection(string listName, int index)
     {
+        if (listName == "warningCueList") { DrawTelegraphInspector(index); return; }
+        if (listName == "flowNodes") { DrawFlowInspector(index); return; }
+        if (listName == "jumpList" || listName == "cancelList") { DrawLegacyFlowInspector(listName,index); return; }
+        if (listName == "attackList" || listName == "phase2AttackList") { DrawCollisionInspector(listName, index); return; }
         if (_serializedConfig == null) return;
         _serializedConfig.Update();
         var list = _serializedConfig.FindProperty(listName);
@@ -130,6 +134,17 @@ public partial class SkillEditorWindow
 
     void DrawAuthoringProperty(SerializedProperty property)
     {
+        if (property.propertyType == SerializedPropertyType.Generic && property.type == nameof(Global.Attack))
+        {
+            var match = System.Text.RegularExpressions.Regex.Match(property.propertyPath, @"^(attackList|phase2AttackList)\.Array\.data\[(\d+)\]$");
+            if (match.Success) {
+                if (GUILayout.Button("Edit collision " + (int.Parse(match.Groups[2].Value) + 1))) {
+                    selType = match.Groups[1].Value == "attackList" ? SelType.Attack : SelType.Phase2Attack;
+                    selIdx = int.Parse(match.Groups[2].Value); collisionPage = CollisionPage.Shape;
+                }
+                return;
+            }
+        }
         var label = new GUIContent(FieldLabel(property.name,property.displayName), property.tooltip);
         // Range/Min property drawers can normalize stored values during drawing.
         // Authoring keeps numeric data verbatim; validation reports invalid values.
@@ -218,16 +233,18 @@ public partial class SkillEditorWindow
         {
             var attack = (listName == "attackList" ? configFile.attackList : configFile.phase2AttackList)[index];
             _trackBoneRef = EditorGUILayout.ObjectField("Tracking bone", _trackBoneRef, typeof(Transform), true) as Transform;
-            using (new EditorGUI.DisabledScope(_trackBoneRef == null || previewModel == null))
+            using (new EditorGUI.DisabledScope(!TryGetBonePath(Selection.activeTransform, out _)))
             {
-                if (GUILayout.Button("Bind bone path")) RunAuthoringOperation("Bind Action Bone", () => {
-                    var root = GetEffectivePreviewModel();
-                    if (root != null && _trackBoneRef.IsChildOf(root.transform))
-                        attack.trackBonePath = AnimationUtility.CalculateTransformPath(_trackBoneRef, root.transform);
-                });
+                if (GUILayout.Button("Use selected bone")) BindCollisionBone(attack, Selection.activeTransform);
+            }
+            using (new EditorGUI.DisabledScope(!TryGetBonePath(_trackBoneRef, out _)))
+            {
+                if (GUILayout.Button("Bind bone path")) BindCollisionBone(attack, _trackBoneRef);
+                if (GUILayout.Button("Copy bone path") && TryGetBonePath(_trackBoneRef, out var path)) EditorGUIUtility.systemCopyBuffer = path;
                 if (GUILayout.Button("Sample bone path")) RunAuthoringOperation("Sample Action Bone", () => SampleBoneTrackingOffsets(attack));
                 if (GUILayout.Button("Update current offset")) RunAuthoringOperation("Update Action Bone Offset", () => UpdateSingleFrameBoneOffset(attack, frameSelectIndex));
             }
+            EditorGUILayout.HelpBox("Drag a bone from the Preview actor hierarchy into Tracking bone, or select it in Hierarchy and use Use selected bone. Paths are relative to Preview actor.", MessageType.None);
             if (GUILayout.Button("Clear bone offsets")) RunAuthoringOperation("Clear Action Bone Offsets", () => {
                 attack.boneOffsets?.Clear(); attack.useBoneTracking = false;
             });

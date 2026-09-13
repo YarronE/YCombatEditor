@@ -8,11 +8,11 @@ $manifest = Get-Content -LiteralPath (Join-Path $source 'package.json') -Raw | C
 if ($manifest.name -ne 'com.ethan.act-action-editor') { throw 'Unexpected package identity.' }
 if ($manifest.license -ne 'MIT') { throw 'Public license has not been configured.' }
 $allowedRoots = @('Runtime', 'Editor', 'Integrations', 'Tests', 'Samples~', 'Documentation~', '.github', 'Tools~')
-$allowedFiles = @('package.json', 'README.md', 'CHANGELOG.md', 'LICENSE.md', 'AGENTS.md', 'CONTRIBUTING.md', 'ROADMAP.zh-CN.md', '.gitignore')
+$allowedFiles = @('package.json', 'README.md', 'CHANGELOG.md', 'LICENSE.md', 'AGENTS.md', 'CONTRIBUTING.md', '.gitignore')
 $allowedExtensions = @('.cs', '.meta', '.asmdef', '.json', '.md', '.html', '.yml', '.png', '.ps1')
 $legacyNames = @('ClipAnimator.cs', 'ClipState.cs', 'ClipMixerState.cs', 'ClipAnimatorActionAdapter.cs', 'RootMotionCollector.cs', 'CameraShake.cs', 'FreezeFrame.cs', 'TimeScaleManager.cs', 'HitFeelDriver.cs', 'ChromaticAberrationShake.cs')
 # Do not follow junctions or links out of the reviewed directory.
-$roots = @(Get-ChildItem -LiteralPath $source -Force | Where-Object { $_.Name -notin @('.git','Releases~','.ycombat-sync.json','.gitattributes','LICENSE') })
+$roots = @(Get-ChildItem -LiteralPath $source -Force | Where-Object { $_.Name -notin @('.git','Releases~','.ycombat-sync.json','.gitattributes','LICENSE','ROADMAP.zh-CN.md','ROADMAP.zh-CN.md.meta') })
 $entries = @($roots; $roots | Where-Object { $_.PSIsContainer } | ForEach-Object { Get-ChildItem -LiteralPath $_.FullName -Recurse -Force })
 if ($entries | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }) {
     throw 'Links/reparse points require manual review.'
