@@ -1,0 +1,27 @@
+{
+  "package": "com.ethan.act-action-editor",
+  "version": "0.2.0-preview.2",
+  "unityVersion": "6000.3.6f1",
+  "createdUtc": "2026-09-13T13:11:01.7779953Z",
+  "result": "Passed",
+  "total": 163,
+  "passed": 163,
+  "failed": 0,
+  "skipped": 0,
+  "installedAsTarball": true,
+  "importedSamplePassed": true,
+  "importedInteractionSamplePassed": true,
+  "playerBuildRequested": true,
+  "playerBuildPassed": true,
+  "archiveUnchangedDuringRun": true,
+  "sourceUnchangedDuringRun": true,
+  "archiveSha256": "02EF7D0F7523730B99961E4F9B63C9568B99ADABA74408F659C31A9DE8102D75",
+  "sourceInventorySha256": "74D3F4B086C1F8C6504C704A778848928736DC4E86C0E86E25F4CD7EACF83FCA",
+  "staticChecksPassed": true,
+  "notPerformed": [
+    "Manual editor visual acceptance",
+    "Published Git tag installation",
+    "Optional integration matrix"
+  ],
+  "scope": "Core, imported playback/interaction samples, selected installation mode and optional Windows Player build; not manual UX, optional integrations or full game parity."
+}

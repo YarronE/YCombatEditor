@@ -1,0 +1,29 @@
+name: Package static checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate package structure (does not run Unity)
+        shell: python
+        run: |
+          import json, pathlib
+          root = pathlib.Path('.')
+          package = json.loads((root / 'package.json').read_text())
+          assert package['name'] == 'com.ethan.act-action-editor'
+          assert package['license'] == 'MIT'
+          for name in ['AGENTS.md', 'CONTRIBUTING.md', 'LICENSE.md', 'README.md', 'CHANGELOG.md', 'Documentation~/AgentCapabilities.json', 'Documentation~/UserGuide.zh-CN.md', 'Documentation~/Maintenance.zh-CN.md', 'ROADMAP.zh-CN.md', 'Tools~/Build-Release.ps1', 'Tools~/Verify-Release.ps1']:
+              assert (root / name).is_file(), name
+          capabilities = json.loads((root / 'Documentation~/AgentCapabilities.json').read_text())
+          assert capabilities['packageVersion'] == package['version']
+          for path in root.glob('Runtime/**/*.cs'):
+              text = path.read_text(encoding='utf-8-sig')
+              assert 'using UnityEditor' not in text, str(path)
+              assert 'using UnityEngine.InputSystem' not in text, str(path)
+              assert path.with_suffix('.cs.meta').is_file(), str(path)
+          for path in root.rglob('*.asmdef'):
+              json.loads(path.read_text(encoding='utf-8-sig'))
+          print('Static checks passed. Unity tests and Player build must be run separately.')

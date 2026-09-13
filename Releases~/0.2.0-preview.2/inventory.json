@@ -1,0 +1,943 @@
+{
+  "version": "0.2.0-preview.2",
+  "status": "LOCAL_CANDIDATE_NOT_PUBLICATION_APPROVAL",
+  "limitations": "Marker scan is not legal clearance or an exhaustive secret scan. Provenance and visual/Git acceptance remain required.",
+  "files": [
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "sha256": "C6002526A061DDCEAFE98E43D94C546175B834A60A8C75AB576711F2B2724656"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "sha256": "F02CEB9BC664F620638295D33F3EA3534EE1EF64D2EA25B6B8120C6FBEBB3EA5"
+    },
+    {
+      "path": ".github/workflows/static.yml",
+      "sha256": "92CD907DDECC0C1640BCBD4F6EE0DF64210A37D46CA2E707BA138F204FD84D9A"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "5D9FE29AC54DB011EC7D0B47CE1D79C9952DB65BDC6EC0F259377B0CA510E9DB"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "4B82767467AB20F21885CCAE9192ADCAC5EBAF1334C16951C5905391E91CBFCE"
+    },
+    {
+      "path": "AGENTS.md.meta",
+      "sha256": "BDC69F54238F21578496C98D16F7E5F265968968414EC86DD1636A59E989AE11"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "DE8CC3EDB2D711D27FF35F3AF46EF851591E0153E457CBFD041C28CB6186AE28"
+    },
+    {
+      "path": "CHANGELOG.md.meta",
+      "sha256": "C51E3932DFFA99FC0EA7B3DBB4F2309E760AE3CF339ABAB957D053FA162AC021"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "F2D4D244E2A0087909BEBC12F0C427F7D63854C2DA7B0121A438B0320EB17C52"
+    },
+    {
+      "path": "CONTRIBUTING.md.meta",
+      "sha256": "280987FA27E17AFB7E7FEB812CACFD01C998691778EB64A17D5813BD8EED8C31"
+    },
+    {
+      "path": "Documentation~/AgentCapabilities.json",
+      "sha256": "CBA23FFE84CFA641FA90584E8BC657BDEF9D281DCC2406AE7492B87450C32C44"
+    },
+    {
+      "path": "Documentation~/AgentCapabilities.json.meta",
+      "sha256": "F5BB084EAD021DEDA24C6A8C14AD3F04271440EE362069180DBAA7EA4BA03104"
+    },
+    {
+      "path": "Documentation~/AgentGuide.md",
+      "sha256": "03E61FB871400F52FD8F78B5FCF63E3B10EA30271F8394F55BDE9D4939406C77"
+    },
+    {
+      "path": "Documentation~/AgentGuide.md.meta",
+      "sha256": "5578A9B5A3F193D354CE12E6EFCB13BCC07025FA084D441F1A14919E9C491BCD"
+    },
+    {
+      "path": "Documentation~/Architecture.md",
+      "sha256": "4106CD65A33607E86F40F3AC4125B9FD60AF91B907021C29797F9DE4B2D41355"
+    },
+    {
+      "path": "Documentation~/Architecture.md.meta",
+      "sha256": "DCE828729E374457B7051490DE2152219B4BD8C9BF060295713D74FD48D01B00"
+    },
+    {
+      "path": "Documentation~/DesignerWorkflow.zh-CN.md",
+      "sha256": "D960F8320C4A553752C07D9962BE638A2562E9ED9EACD3BB25F51FF6A7B3062A"
+    },
+    {
+      "path": "Documentation~/DesignerWorkflow.zh-CN.md.meta",
+      "sha256": "51FA24758D6A1DF0AAE1269CF00B188D4208E60A5CDDEAADF7F0552B8A910678"
+    },
+    {
+      "path": "Documentation~/IndependentPresentation.zh-CN.md",
+      "sha256": "F8ABE1E0C9369340FB963C9A97F27370A34A866C1532505D9ED8D28063EB562B"
+    },
+    {
+      "path": "Documentation~/IndependentPresentation.zh-CN.md.meta",
+      "sha256": "A5CF415AD08FAE4582965EA72E044CA7163FCE1551564C27E085BFEE990C2388"
+    },
+    {
+      "path": "Documentation~/index.html",
+      "sha256": "007BE578C6FBE1195DE8BF620D6D841B8A064D90B9FC56C6B4FFE26E12CB1121"
+    },
+    {
+      "path": "Documentation~/index.html.meta",
+      "sha256": "B086213B76DE10D9EE2057C3078CC9BBFD2D916D97FF9E5E6F0B7357B5BFED89"
+    },
+    {
+      "path": "Documentation~/Maintenance.zh-CN.md",
+      "sha256": "9C5B1E0715FDFDCECFB388DE107B4630AAEA6820ECC30810FEC9A58A8AB90D22"
+    },
+    {
+      "path": "Documentation~/Maintenance.zh-CN.md.meta",
+      "sha256": "133F8EA291CC5104D838E2D2B3E82D00919B76D4CA98808D40E7C226E624F603"
+    },
+    {
+      "path": "Documentation~/Migration.md",
+      "sha256": "1CF50EF09A0190394065C2F2CAACCC8CF41B189A790A5B9C1A3E95475B009D81"
+    },
+    {
+      "path": "Documentation~/Migration.md.meta",
+      "sha256": "2FDEAF3190C1A4E9593A3562A7950EE42FC35FCACEDEAAAD4335771626DE4B80"
+    },
+    {
+      "path": "Documentation~/Quickstart.zh-CN.md",
+      "sha256": "5CE81277BF1ECABE37539CDB0837BDD15084B8089CF86CE25E1EF75A3FBF1321"
+    },
+    {
+      "path": "Documentation~/Quickstart.zh-CN.md.meta",
+      "sha256": "823437DF60FBBD7661BC9C703437D60109C19B4ED407FA1421174F282CF1CED9"
+    },
+    {
+      "path": "Documentation~/ReleaseChecklist.zh-CN.md",
+      "sha256": "24E84B9E6D37EB67C21F7BB732C860762EAC0A64FE30206B8F017FCCA7BC8079"
+    },
+    {
+      "path": "Documentation~/ReleaseChecklist.zh-CN.md.meta",
+      "sha256": "05DAACB9772C24513E9589938AC5FE5FF521849048A159EA623BCE46204D5D7F"
+    },
+    {
+      "path": "Documentation~/Runtime.zh-CN.md",
+      "sha256": "6CD33E46AEC60C5FEDAF41FE94121C155B8FB967D717AB58E41742B734ED8A79"
+    },
+    {
+      "path": "Documentation~/Runtime.zh-CN.md.meta",
+      "sha256": "88CB4D18A14EB837973982DC8D57EE9E07BD84627F6B1267BAB246848106E9C4"
+    },
+    {
+      "path": "Documentation~/Tutorial.zh-CN.md",
+      "sha256": "B5FEEAE1EC8925863390BD557C62D15C4FF2C242244335A8716CEEE0C2721A7A"
+    },
+    {
+      "path": "Documentation~/Tutorial.zh-CN.md.meta",
+      "sha256": "218573242A06DA14BD5AF09D641EF9A8C1D260C97BFFAA06F02DC688F8CA6B3E"
+    },
+    {
+      "path": "Documentation~/UserGuide.zh-CN.md",
+      "sha256": "9DC6EDF6487AD620C8BDF2DEA20FC6DF341947FACC14A65A9AF66D6D91402573"
+    },
+    {
+      "path": "Documentation~/UserGuide.zh-CN.md.meta",
+      "sha256": "CA5EACF37EAEF3F305FA5E4DEC5E66B660FF35ADD2F3D77DC341A6AA2B100321"
+    },
+    {
+      "path": "Editor.meta",
+      "sha256": "F7DB8A3F14E0F9D25C97D9F1135A57603804EE078EBFC51B9059C18C98E8D897"
+    },
+    {
+      "path": "Editor/AssemblyInfo.cs",
+      "sha256": "0ACC2485F4B147C88CD8B12701367DEDC60787CDEA22609954DFD67CBF00E34D"
+    },
+    {
+      "path": "Editor/AssemblyInfo.cs.meta",
+      "sha256": "28BED7EAC3EB3DDC56FEBDA97C221BE575C47F33BCD5426E611777F5522C2553"
+    },
+    {
+      "path": "Editor/Ethan.ActionEditor.Editor.asmdef",
+      "sha256": "20142A3D413711EFE016CA3EAE70F47F7E290970D39387D8D54FD602338B2D18"
+    },
+    {
+      "path": "Editor/Ethan.ActionEditor.Editor.asmdef.meta",
+      "sha256": "9E2557A3AE51B24C27007EA40C689C0F1FD9A83B47CF770881941E20836FB159"
+    },
+    {
+      "path": "Editor/Infrastructure.meta",
+      "sha256": "7C6CFB6072F653203E08E64D99296F2B4190A32D798E79F9CA8FECBB65A5D728"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionAssetCreation.cs",
+      "sha256": "CEAE0D3D874CDA6BA65488996364867B52FFBB4F8B739BFA178E3EEA7D4C758B"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionAssetCreation.cs.meta",
+      "sha256": "8E20E53F97E2EEBFC88BA8C9E650AD581BEE92D8EEB13F184FA71D80FCFBA5D5"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionConfigMigrationService.cs",
+      "sha256": "D289F45815D185B97BA0400673D13151B4FAD6D6E94A7D19861F5888D81D868D"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionConfigMigrationService.cs.meta",
+      "sha256": "0B296FF33B9FEAC4F9FE81FAAB6D661CC498820F4F7ECBDE4D7BA5CF127721DF"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorAgent.cs",
+      "sha256": "88663D20BE5C4B8C6FE4BDCD68A7C7AFD4C669DDA299EA00BD9447FA90B1EFFF"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorAgent.cs.meta",
+      "sha256": "DE7048D6A81435E3EA6021A96FB61118C55047A64DBB52EA7AE04D40284C4F17"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorAgent.Editing.cs",
+      "sha256": "CC4B597E8E7DA3C6268F4FFD721BAA85F18F0460803617AD3B105E64BBA9E5AC"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorAgent.Editing.cs.meta",
+      "sha256": "7CF96D2181C7F214F43144ECB4C2DB3413B2E65D63350EE379CDA159DB44C808"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorHelp.cs",
+      "sha256": "D4CBEE1786EAC1418FABFC96FCE4705B5AE5566B08184CC5BD78A6642B453CF2"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorHelp.cs.meta",
+      "sha256": "AE92F25AA5F3D3B2C502D8E9221DCB421748AA6FF3500A7425E3A362B93DCF85"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorSettings.cs",
+      "sha256": "BBA9A68577E7C5E3EA2F29D21D02608AB2A25BEEFC85FA767707A046FFE5F4AF"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorSettings.cs.meta",
+      "sha256": "956DCDCADEFF6F1FFD298EE9DED4F82891140BF891D07D13ADDED182B865DC0B"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorTransaction.cs",
+      "sha256": "4644E8A25A02E6CD22FBF0709C75EE218054DD74239F866FE68355CF9C9BA61A"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorTransaction.cs.meta",
+      "sha256": "36DB6C55B5C54D7E20CCE5BD04423FE48E0FE06764D826E1A38591667FCDE75C"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorUserSettings.cs",
+      "sha256": "7C374E4870342924F0CB8254BFC7BA350401FDEEB753E7753110F6015664418F"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionEditorUserSettings.cs.meta",
+      "sha256": "3096031967A781C19326D6712B9BB560899950E2A5AFE58C88B42A88C8FE17B4"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionPlayerInspector.cs",
+      "sha256": "640AB510528A3F98D3DF48B14456C45F6D84CEFD731E6E5A90FA8929D7DD6ADD"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionPlayerInspector.cs.meta",
+      "sha256": "B3222C52E132D8AF8D69885089BDB1B6AF464A20B019EB7477E516EE433DF0F8"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionTimingMigration.cs",
+      "sha256": "0161F03266B85CADEFE36A4B34830715129513C59F7A370D976D481FD7774762"
+    },
+    {
+      "path": "Editor/Infrastructure/ActionTimingMigration.cs.meta",
+      "sha256": "EAB34FE67303BC389C8ACD747BE8E42313775A337BE5D43780441EF74546845E"
+    },
+    {
+      "path": "Editor/Timeline.meta",
+      "sha256": "95550C0A8A42E6842E38857365524A032FCCA51DB03E58D352F33BF0E746086D"
+    },
+    {
+      "path": "Editor/Timeline/BuiltinTrackRegistry.cs",
+      "sha256": "B617A22304B356C07ABF82E3BBAA6C82DC6CCE3D2F2CF89C67D20738AA18E59F"
+    },
+    {
+      "path": "Editor/Timeline/BuiltinTrackRegistry.cs.meta",
+      "sha256": "0F77E76ABDEE52E7B7C74462AEAB77EC84E1D8EC1F434AA67BF518E09412680C"
+    },
+    {
+      "path": "Editor/Timeline/EffectAuthoring.cs",
+      "sha256": "D9C38DC94BBFB1C2A62FBAF4BFAB4F2820A635624AF7F7FDB5DEA3C2F47D9D06"
+    },
+    {
+      "path": "Editor/Timeline/EffectAuthoring.cs.meta",
+      "sha256": "8FF80557FA2405D59FE6265ABBC89CFEBAD0C829FB8112F7834BD4E3830A9DC4"
+    },
+    {
+      "path": "Editor/Window.meta",
+      "sha256": "EF5087B8C8DFBB038C38D3A5F9AB944092E988B44EB9156BF9F96185B53F82C8"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.cs",
+      "sha256": "4CBEBC86EF10A8BB9066239D4B34DE8AEF4D49546FB527C69443EAFB3C902AFC"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.cs.meta",
+      "sha256": "88B38F74144403468DC2D47EFB2B157D4696C7C1751B80D748DB16724CFF8F45"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Inspector.cs",
+      "sha256": "A53F4742601E1CCA1A62C9765217B36F3A354688E74417B51AEE7F1467D71D0B"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Inspector.cs.meta",
+      "sha256": "AFB065171F8E3DAA997AD0E0B7008FA13711E4140380000DA085775EB47A8AD5"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Interaction.cs",
+      "sha256": "8BFE9872E0BA1E38F281BF3924AD5FF5E1B35A7BE0F0257B55B8426B72A715A5"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Interaction.cs.meta",
+      "sha256": "87FFC447C3A7410E93F5D22DAC31C63D66DA908B21D751BCAE222EE855AF82B4"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.InteractionWindows.cs",
+      "sha256": "943E4CCA4FBDF785E7CF20251413A736103888F2771793F9F19B1B9577BB68D1"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.InteractionWindows.cs.meta",
+      "sha256": "0F6BE0F0948FE0158D268B0676F123B10452831B83CCADED31587DBABAB43F07"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Persistence.cs",
+      "sha256": "30E2209FDB05C3E24DB803FF19DF49D84FD4DF49EF1888E1946887CA05695E01"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Persistence.cs.meta",
+      "sha256": "EACB5CF9AE24487AC708275B99A1E9FC4F5522FFF1F3B625C3EC346924809C20"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Preview.cs",
+      "sha256": "74E58BFFBBE2B3FDF7EDD52FC19C2BEFAF4E4D40B961B307CBAA892CB6A972FD"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Preview.cs.meta",
+      "sha256": "82BCD04C6C58B760924B81EAA88561241D181638EC201FDF6296555C7DAA965A"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.SerializedInspector.cs",
+      "sha256": "08EC11EC5E60EE6FDDD22CC9129237A60ED2C53D59CA974FAC2D1AB95FCD119F"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.SerializedInspector.cs.meta",
+      "sha256": "6510CF77BADE2AC5B7F73A2A554DA716885E39B6862F024B7499AF0887E21EE3"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Structure.cs",
+      "sha256": "FF231BADF54A78109E1D54312334A688FBBF0196DD2A8C73AB88970F6C62D445"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Structure.cs.meta",
+      "sha256": "4591566F7D0A229ECD55F569A6D0DA41DD506BE0F1483942E9292F1BA630C421"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Timeline.cs",
+      "sha256": "171CFB0EEB261D4CD5E4A1421C185530FF06D1FDEC5A2EA655C2C021CE883BA7"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Timeline.cs.meta",
+      "sha256": "D85F80101D4EF7E9EFB5AC777B866C5D608592D3515C77FB21B9267E31E6F029"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Toolbar.cs",
+      "sha256": "D31A63778AF9428203A601FD5EED0B67F9037BDA6D90EF159D70E437D04D5BE3"
+    },
+    {
+      "path": "Editor/Window/SkillEditorWindow.Toolbar.cs.meta",
+      "sha256": "5ACC771C2F528B71338268AF859C5E612B5B7ECFF7CDFCE9149C8A3539E8060C"
+    },
+    {
+      "path": "Integrations.meta",
+      "sha256": "36696263EFFD54366DF0E26A93BA8AE010E0970B460A5FE294FCB558BDA44859"
+    },
+    {
+      "path": "Integrations/AINavigation.meta",
+      "sha256": "4C4C2530F849CF7DF617C06B3DA64080A57D6E5CF31DF97A6027ABC9358F6BC4"
+    },
+    {
+      "path": "Integrations/AINavigation/Ethan.ActionEditor.AINavigation.asmdef",
+      "sha256": "E83A6A8EB73DD4D79EBC9E57741FE8E80958BAF94A149011EA9520164ECB46BC"
+    },
+    {
+      "path": "Integrations/AINavigation/Ethan.ActionEditor.AINavigation.asmdef.meta",
+      "sha256": "7BEEB77CFA09F9D092DD39CE82EE06036DEB06871F1EBAF0B3058CB712D156D5"
+    },
+    {
+      "path": "Integrations/AINavigation/NavMeshAgentBackend.cs",
+      "sha256": "1730FB552B52DA6E7B57100C43AED82C9F828D7ECE2BAE36AA900CB53D90A855"
+    },
+    {
+      "path": "Integrations/AINavigation/NavMeshAgentBackend.cs.meta",
+      "sha256": "A80D4EEDCB85B5E86A9735E28886578253DB2C57B020D69F1D5EF5AC79E2A008"
+    },
+    {
+      "path": "Integrations/URP.meta",
+      "sha256": "6D75154FE67189C3DA48A81AD86D67C367A1B19819F23AC555CB080961264A92"
+    },
+    {
+      "path": "Integrations/URP/Ethan.ActionEditor.URP.asmdef",
+      "sha256": "909A6497295EF654A8578BCDC520FCD089B25940C16E19504608A751DFA47864"
+    },
+    {
+      "path": "Integrations/URP/Ethan.ActionEditor.URP.asmdef.meta",
+      "sha256": "485F25AF21EF35417374B1FB3A6106948185E8061FB825DEB2E1DD70F8CF5ED3"
+    },
+    {
+      "path": "LICENSE.md",
+      "sha256": "53BA2CAA7C1CBF067D95FAE4A3C73A0D7EC4758AD9851D6FC530E88DC526C6F2"
+    },
+    {
+      "path": "LICENSE.md.meta",
+      "sha256": "E282C3AD125E5666B2D2D5EA75E57A0B6EAAF4A5D7213BEBA84A37F63137E6FC"
+    },
+    {
+      "path": "package.json",
+      "sha256": "EA42DD840B96A89F092EB8975297F8BE3C650FBC79F8A4BAB280EDB2277ED84E"
+    },
+    {
+      "path": "package.json.meta",
+      "sha256": "A7E1F55ECF1E7AC130D2AFC70DF8706EDB4C29F3D1E65E4C6043CB2B9DC799F4"
+    },
+    {
+      "path": "README.md",
+      "sha256": "C855FC6E76060B0F8F8BCF8F3C72E6B08E64E4159999FEE79C3DC770B201580B"
+    },
+    {
+      "path": "README.md.meta",
+      "sha256": "E0747576B8B6B546575346944EAB89F01CD2766946A4CE74E52B5DA09FB70587"
+    },
+    {
+      "path": "ROADMAP.zh-CN.md",
+      "sha256": "3A449CEEF93A4E2AFA4410408DAA3015758220913EE17562FFB9732F07EBCAB2"
+    },
+    {
+      "path": "ROADMAP.zh-CN.md.meta",
+      "sha256": "60C9862F5BD8B6CE9626ACF108906CD550C12C81EF4351201EE8A298BEA0E262"
+    },
+    {
+      "path": "Runtime.meta",
+      "sha256": "163E6BA8BBE3B2ABA8520148A186EA09FEFA80B8DA179AFCF5B371D3AFC15735"
+    },
+    {
+      "path": "Runtime/Animation.meta",
+      "sha256": "F4F156D328092CC9685B6B2CE8C8DEFBCECBC9CD363B9A110B5B2388CA87DDAF"
+    },
+    {
+      "path": "Runtime/Animation/ActionClipAnimator.cs",
+      "sha256": "9F580B66B4424E216145438A55056C1C5C5C2B51B7D9B2ADBAF40619FE3D217D"
+    },
+    {
+      "path": "Runtime/Animation/ActionClipAnimator.cs.meta",
+      "sha256": "F3CC4EF71663A33BEF151EB85B065F824A5228F0D48FBAA594582E5706E6E0D5"
+    },
+    {
+      "path": "Runtime/AssemblyInfo.cs",
+      "sha256": "5614C0DB00D35B4AD44D2BC98DD677198A124FFFA1AD1088825C70E71D076E5C"
+    },
+    {
+      "path": "Runtime/AssemblyInfo.cs.meta",
+      "sha256": "FEAF5DE4542D7DC453097CBFBA8A8CE5E24D6E043EF70A173A44C7ACE4C69B5F"
+    },
+    {
+      "path": "Runtime/Core.meta",
+      "sha256": "724AB905A539B6192F4527D7479DCD3B060A3F54FFB0DA73CA76227A67155A48"
+    },
+    {
+      "path": "Runtime/Core/ActionContracts.cs",
+      "sha256": "8F121E627898F38735D1125A9258C85C8BCC6934EE7B252FB26D977E85A265F2"
+    },
+    {
+      "path": "Runtime/Core/ActionContracts.cs.meta",
+      "sha256": "2E6FE8C68B130D12497C5ECDA818AAAAD73076F8272B64CA5D2F0CFA2A84D54C"
+    },
+    {
+      "path": "Runtime/Core/ActionInputBuffer.cs",
+      "sha256": "ECBBA9B4FF22EAEEAC03E915B6B4633A4B83B9A8F8DB3F9D2DE359D4F867433B"
+    },
+    {
+      "path": "Runtime/Core/ActionInputBuffer.cs.meta",
+      "sha256": "7B2BDA8C2E2A858C89A52ED24FED23786D2FF616CBD3E82DC698CA69D63BCDB2"
+    },
+    {
+      "path": "Runtime/Core/ActionMotionPolicy.cs",
+      "sha256": "555809C9CAEBDCC3FDF14C956902904F256420B693CD4A5A2347E6902831AF23"
+    },
+    {
+      "path": "Runtime/Core/ActionMotionPolicy.cs.meta",
+      "sha256": "64B8911433A3EC8B1C6989438525C40C4E51402CA002CF4DEA71BCB01F3B661D"
+    },
+    {
+      "path": "Runtime/Core/ActionPlayer.cs",
+      "sha256": "69426C8D3EBEE9790422BA78652306A8C99EB7E7DD2954016DF76B0B91A66B33"
+    },
+    {
+      "path": "Runtime/Core/ActionPlayer.cs.meta",
+      "sha256": "F86571AB5D2DD2B2A68DAE41957FAC7E1E0CA147B126B0DF79FBA08CB542CC97"
+    },
+    {
+      "path": "Runtime/Core/ActionTiming.cs",
+      "sha256": "83BF1C9D15DCD450F48C2D0D10B9D0CA59710DED3B97CAAB0190252F19DBE36C"
+    },
+    {
+      "path": "Runtime/Core/ActionTiming.cs.meta",
+      "sha256": "CDFCBABD95E11BEB7D23CC3B3AFECEEB25AC367A193C35AA16CE0A10E1869C37"
+    },
+    {
+      "path": "Runtime/Core/ActionValidation.cs",
+      "sha256": "1E454E8F2F1F203EE950BA5902553F41A130B3619D2E5F1A75E47166A1C036BE"
+    },
+    {
+      "path": "Runtime/Core/ActionValidation.cs.meta",
+      "sha256": "1976CF3F8C8B587B582800C6F030D9400BD53EED095829BAA5BAF67676D56974"
+    },
+    {
+      "path": "Runtime/Core/InteractionDiagnostics.cs",
+      "sha256": "158A8ABB43484899FE8BB29A468FC5612ACA85102712A6BB7B5C2823066B07EF"
+    },
+    {
+      "path": "Runtime/Core/InteractionDiagnostics.cs.meta",
+      "sha256": "7072A4C4446BDB12FED42DB4DBD480C7E6964121B329E9ED485E16BB17380A58"
+    },
+    {
+      "path": "Runtime/Core/InteractionWindowRuntime.cs",
+      "sha256": "67FCF93315CFA70B93D8656C48A8E2F113EF314706D98CB28BC273ED47096D9A"
+    },
+    {
+      "path": "Runtime/Core/InteractionWindowRuntime.cs.meta",
+      "sha256": "B35BD121A8F9F748953B697C4F7AA8FBE82A4B37F671B2221FC795111FD4EDFA"
+    },
+    {
+      "path": "Runtime/Data.meta",
+      "sha256": "32BA02F64AC8E4F3144B1675DFDA6E912C65B7D4569D103F47C60C88F7C87FFF"
+    },
+    {
+      "path": "Runtime/Data/ActionCameraCue.cs",
+      "sha256": "90D7953098316D9306A2D88CD06F7887F2C2B14B727621F73CDB45C9A175536D"
+    },
+    {
+      "path": "Runtime/Data/ActionCameraCue.cs.meta",
+      "sha256": "CB5E92B755CAD667E484BE65A18EAEAABF5AE7AEFEE829992B55B0FDE4337D2F"
+    },
+    {
+      "path": "Runtime/Data/ActionPhaseMarker.cs",
+      "sha256": "FB45FFE1F088A7E4E5AEE5F794B2D41B8D8CB6FE429A097F286415179D93BA01"
+    },
+    {
+      "path": "Runtime/Data/ActionPhaseMarker.cs.meta",
+      "sha256": "8DFFD7E0D6220A04848BE5CDD93082C18C38CA5233BA2931B2FBF065467D5539"
+    },
+    {
+      "path": "Runtime/Data/Global.cs",
+      "sha256": "822D7E96FA85EF848C2EC8E894351559478DB74EF55A2DBF56B07412D0DAE5B1"
+    },
+    {
+      "path": "Runtime/Data/Global.cs.meta",
+      "sha256": "2D3B1132FF696567E6076D0E45B57624E9BB32201BBB42701CD960026EAB904F"
+    },
+    {
+      "path": "Runtime/Data/InteractionAttackCondition.cs",
+      "sha256": "E9C74F4512D9037B7B97BE8DE989AF70936874653AA0CC23E27290B7B0DD74C2"
+    },
+    {
+      "path": "Runtime/Data/InteractionAttackCondition.cs.meta",
+      "sha256": "C4371ABD7F2AB268DC68A850C45951B82E6AE9EAC46C5F030C5C21E08D53C2E4"
+    },
+    {
+      "path": "Runtime/Data/InteractionCondition.cs",
+      "sha256": "E2B4B902D7BEA7073DEB2B86B61E637623F8CCBA1F731C8171EB3CBA2616729F"
+    },
+    {
+      "path": "Runtime/Data/InteractionCondition.cs.meta",
+      "sha256": "B9547DF131393D81E2A7E2CC8AC81D75438BF11698DF8B0576D8A96F0DBCEB45"
+    },
+    {
+      "path": "Runtime/Data/InteractionConditionGroup.cs",
+      "sha256": "C827FABA91B89A2DE182AE7D16CAE38505DE7EA993A40AC044BE0B7A0A30A2FE"
+    },
+    {
+      "path": "Runtime/Data/InteractionConditionGroup.cs.meta",
+      "sha256": "9E29E1B4AA6FA3966DEACB81A5ED0ED7C7B2691E38290D7213900EB9732BCAC6"
+    },
+    {
+      "path": "Runtime/Data/InteractionFacingCondition.cs",
+      "sha256": "1C008F6A41CBA15213C0201F086A86CB92CDD0DF52F06F87492F896969F71DEB"
+    },
+    {
+      "path": "Runtime/Data/InteractionFacingCondition.cs.meta",
+      "sha256": "48A00AB736C6FB6078E3516834E6D70A948F71F03828E09899392389D2DC70E9"
+    },
+    {
+      "path": "Runtime/Data/InteractionResourceCondition.cs",
+      "sha256": "93E728B747D1170024C6A5CA37C39E540E6D657F0014356B455580DB4BC89147"
+    },
+    {
+      "path": "Runtime/Data/InteractionResourceCondition.cs.meta",
+      "sha256": "8E337CA1D612C12CE49B4E711B96A6CF8807FD6D580E1617E7B1BBBFA9291DA3"
+    },
+    {
+      "path": "Runtime/Data/InteractionWindow.cs",
+      "sha256": "1895E701EC344E564E74EFD2CC5FB711C5512672C3620212A84C77536C1C185F"
+    },
+    {
+      "path": "Runtime/Data/InteractionWindow.cs.meta",
+      "sha256": "6A43DD25FDBA2E7128F014B89FD6C62269755A9136E28CBD0E0ACE2A0109B16D"
+    },
+    {
+      "path": "Runtime/Data/SkillConfigSO.cs",
+      "sha256": "E4E1F7E287F858EF86E65D29F6341B962F8EFF638143BDE8E01618D691F693E9"
+    },
+    {
+      "path": "Runtime/Data/SkillConfigSO.cs.meta",
+      "sha256": "DC6EF338204B5EA56ECE2AA75787A7AB9285A00AD992BFBAB623A15B77472905"
+    },
+    {
+      "path": "Runtime/Displacement.meta",
+      "sha256": "5D1E05C6E3B98FAF1E1DD596CE4A3938BB3C12200871CB4D8A7F476AB7F94BB4"
+    },
+    {
+      "path": "Runtime/Displacement/ActionCharacterControllerDisplacement.cs",
+      "sha256": "0E903333E09B0FF3C2B65E7F9CB19332C4E3976527D118B7AC41AEE8246EF96B"
+    },
+    {
+      "path": "Runtime/Displacement/ActionCharacterControllerDisplacement.cs.meta",
+      "sha256": "9CE8E640E520E8F7EBC426FD708A4FCAA82D38F0857454BBA2EC582ADFB1DCD6"
+    },
+    {
+      "path": "Runtime/Displacement/ActionFacingDriver.cs",
+      "sha256": "7689FC35D082565B797AC34BC44C75C86999C72D3DDA92FF35F662A44CB232FA"
+    },
+    {
+      "path": "Runtime/Displacement/ActionFacingDriver.cs.meta",
+      "sha256": "150DA3617B279F1CF824D7914AEE0F14EB781DDC5977619C3E19DCF1C110BEF4"
+    },
+    {
+      "path": "Runtime/Displacement/ActionRootMotionCollector.cs",
+      "sha256": "A3F543557CB150D1B2A7CCE073FAECEF8B4F7B01C054489EC61E0D845F9BABA8"
+    },
+    {
+      "path": "Runtime/Displacement/ActionRootMotionCollector.cs.meta",
+      "sha256": "DB27C0EA043CE2F98E16A698EC25D357DF9102E2B6847406B89DD883105B17D3"
+    },
+    {
+      "path": "Runtime/Displacement/CharacterControllerBackend.cs",
+      "sha256": "5FDA3DF5D335D30DBAF97D93FF204EFF0A994E89BD66D1CE7F7AF7A103CF796F"
+    },
+    {
+      "path": "Runtime/Displacement/CharacterControllerBackend.cs.meta",
+      "sha256": "A774C3363086D35AAA426CA2772A617BCD48030FC3A0F89EB9FACFC312C3DBF8"
+    },
+    {
+      "path": "Runtime/Displacement/EnemyTargetResolver.cs",
+      "sha256": "0B5CFD5C328ED496B88DB3D00398B5DF83D89C65DB70DA93AB64B6DA6440F9A0"
+    },
+    {
+      "path": "Runtime/Displacement/EnemyTargetResolver.cs.meta",
+      "sha256": "6385CD640E07DC938D39EA263A033116252627C8D58109EC9189A5A5C5BA4C19"
+    },
+    {
+      "path": "Runtime/Displacement/IDisplacementBackend.cs",
+      "sha256": "DE2068C64714DE460EC0118F19D0808E21B7DE2DF3F052076039C3AFB5463219"
+    },
+    {
+      "path": "Runtime/Displacement/IDisplacementBackend.cs.meta",
+      "sha256": "9215A226EB254282DF40EF88BBB8907A229EFFB3081B037DD61A21CA57694CFE"
+    },
+    {
+      "path": "Runtime/Displacement/ITargetResolver.cs",
+      "sha256": "D653F77BA8C484294A0E4DF8EC137C40788C2ED920E22366A5615348BA01643E"
+    },
+    {
+      "path": "Runtime/Displacement/ITargetResolver.cs.meta",
+      "sha256": "59F2DB749CF46E51EA8AF9B5386FE1ABB7FB13CEDA1A7E15F58F8C1DC1B047AF"
+    },
+    {
+      "path": "Runtime/Displacement/MoveSolver.cs",
+      "sha256": "36C99028AF4889142A68DB85611554240F20EBB9645B26AA927A13BC41F927E7"
+    },
+    {
+      "path": "Runtime/Displacement/MoveSolver.cs.meta",
+      "sha256": "022D1DCC0D764CBA0C461E5A0943935D29E647DD0739D1324BBC672F2E0E1167"
+    },
+    {
+      "path": "Runtime/Displacement/SkillDisplacementDriver.cs",
+      "sha256": "693D4808E068069C6A6565CEE02393E1EF46FB1C664240A61BFB320174407A75"
+    },
+    {
+      "path": "Runtime/Displacement/SkillDisplacementDriver.cs.meta",
+      "sha256": "306BC642D6A4D2978D1F00413427E4224604CF9785678518143EA9BB3A154EB9"
+    },
+    {
+      "path": "Runtime/Ethan.ActionEditor.Runtime.asmdef",
+      "sha256": "EE4F24C04171A063BF4D729C7A50A5A35B065C9832FBB1B3F95CE30DB0F97D86"
+    },
+    {
+      "path": "Runtime/Ethan.ActionEditor.Runtime.asmdef.meta",
+      "sha256": "DAA4FBB5AC2D6A00F643390EEFFEE156E10492659E92FA386F83FD2BE71D00A5"
+    },
+    {
+      "path": "Runtime/HitFeel.meta",
+      "sha256": "E295DBF995FE079F62EDA11A6494064CEA48605EDB4965C52643AE1AF4FB19C5"
+    },
+    {
+      "path": "Runtime/HitFeel/ActionCameraDriver.cs",
+      "sha256": "6AD083BECC4CC9520631C1E41340C5CB1ECB520878B827D5A02863EAFE24580F"
+    },
+    {
+      "path": "Runtime/HitFeel/ActionCameraDriver.cs.meta",
+      "sha256": "99E7E0FF8260D6917324D01833B9519774A488183B29E0CA6A08957DD5EAFE2F"
+    },
+    {
+      "path": "Runtime/HitFeel/ActionCameraShake.cs",
+      "sha256": "C88CCC7E6C1ABCE3C401F7B97DD39D4683069FC5A45E66E62477B10720DB6BD2"
+    },
+    {
+      "path": "Runtime/HitFeel/ActionCameraShake.cs.meta",
+      "sha256": "01DA48FD9F546539350949838A4EA875A177C878E2D1FBB8E4014B6086147256"
+    },
+    {
+      "path": "Runtime/HitFeel/ActionHitStop.cs",
+      "sha256": "48B1B5B577BF135E4692E9D100CA2F9FA60872A4CC0D2F35F69E07C11535C27E"
+    },
+    {
+      "path": "Runtime/HitFeel/ActionHitStop.cs.meta",
+      "sha256": "C1C19A6B5A05819874FA039931F6962DC1A0E7B8DD19643648DBCA5FC9CC484D"
+    },
+    {
+      "path": "Samples~/BasicPlayback/BasicActionLauncher.cs",
+      "sha256": "1D1AD076A782DB4C1155AD3F7C8529BAB518FB5CCF36FF181AF2FDEE01B1CEB9"
+    },
+    {
+      "path": "Samples~/BasicPlayback/BasicActionLauncher.cs.meta",
+      "sha256": "A1B980C9D1F9EC2127BA0AA38E8B11B85E3904E38F4584AD46A874A62335602D"
+    },
+    {
+      "path": "Samples~/BasicPlayback/BasicActionReceiver.cs",
+      "sha256": "E9D743BC394D3C0F67E0649839C5B1E31FFE115ADBF298F21645F65C48CB1276"
+    },
+    {
+      "path": "Samples~/BasicPlayback/BasicActionReceiver.cs.meta",
+      "sha256": "3AD1741C1BDE3D531D40C8CB6E9553CB24E3285948715EDBD72561DA4C3F3647"
+    },
+    {
+      "path": "Samples~/BasicPlayback/Editor.meta",
+      "sha256": "211C135F5B6FD3B6E5548CEBFCBAD6767ECB34290CFFAEF718BE4EBF82293FFA"
+    },
+    {
+      "path": "Samples~/BasicPlayback/Editor/BasicSampleBuilder.cs",
+      "sha256": "CC76F9D0A968A1656767ABA51CE11D0D0C25E918A5709F6F46A0FEC0C181657C"
+    },
+    {
+      "path": "Samples~/BasicPlayback/Editor/BasicSampleBuilder.cs.meta",
+      "sha256": "66F4A7FFFFC28246637A2FB4A731234DC97F62FE389816F18BD8C14AC4057DAB"
+    },
+    {
+      "path": "Samples~/BasicPlayback/Editor/InteractionSampleBuilder.cs",
+      "sha256": "F2CE51962048A10770714EA4F1FBAB93D5A158F2DCD95C1467C867AE506F1258"
+    },
+    {
+      "path": "Samples~/BasicPlayback/Editor/InteractionSampleBuilder.cs.meta",
+      "sha256": "69A450FF3E78BEE793CC17D1ABDF66A75C3971EA8F475FB0C79748BA3075B92D"
+    },
+    {
+      "path": "Samples~/BasicPlayback/Editor/SamplePlayerBuild.cs",
+      "sha256": "282E90262CE0B13E31A20559BD2DE6FA45344C3B42ACFB4707FAC9C3846404B9"
+    },
+    {
+      "path": "Samples~/BasicPlayback/Editor/SamplePlayerBuild.cs.meta",
+      "sha256": "6052D09BE4CE690381DBEA77A26044CB7BC576D31E969ED5B5A013B42425F307"
+    },
+    {
+      "path": "Samples~/BasicPlayback/InteractionPlayground.cs",
+      "sha256": "6E5F29F07EC6639F159BE3CE85699928F716FC7951983CE0B54857867E9F6F85"
+    },
+    {
+      "path": "Samples~/BasicPlayback/InteractionPlayground.cs.meta",
+      "sha256": "20137A71B98E3943657A5701CAE54C0E6FCEE128B835D47BFF1223E9C99E2E5B"
+    },
+    {
+      "path": "Samples~/BasicPlayback/PlaygroundDistanceCondition.cs",
+      "sha256": "9228DE860504A31B5A6BF596A48D91BC64676C2D523A58F4CB309DE5F1A966D9"
+    },
+    {
+      "path": "Samples~/BasicPlayback/PlaygroundDistanceCondition.cs.meta",
+      "sha256": "B75CD6B1B14A29301EA30A98819C7ED9902F3CD9B2F4F4625BE3BA7240BDF770"
+    },
+    {
+      "path": "Samples~/BasicPlayback/README.md",
+      "sha256": "5BE7DB1497061F5ADE395690120F4187C99B2D05D5A284391AE590D5B4BB483E"
+    },
+    {
+      "path": "Samples~/BasicPlayback/README.md.meta",
+      "sha256": "5D3B654B2E804F01CF39A37150F568821D6C4A658795C05C9440BC8B0EBB9E27"
+    },
+    {
+      "path": "Tests.meta",
+      "sha256": "061BFC2800045CC80394FDECB56D920D49B433627E3829586D5298811E5EFE22"
+    },
+    {
+      "path": "Tests/Editor.meta",
+      "sha256": "E72F337A1382213B5D5B87D9EA72798C30861A2958AF76B546B40BC12DAD3983"
+    },
+    {
+      "path": "Tests/Editor/ActionEditorAgentTests.cs",
+      "sha256": "CDBC4BFB9319330B75E8A370513E2FC7D51BEDD1C24362D8BC83D7C2C4F45D31"
+    },
+    {
+      "path": "Tests/Editor/ActionEditorAgentTests.cs.meta",
+      "sha256": "8B54E455E3CC041051419E00E924CDAC4014572B1926E5F7557904C13F2D2D7D"
+    },
+    {
+      "path": "Tests/Editor/ActionEditorTransactionTests.cs",
+      "sha256": "1E7FA4F89C4A32D3273700C15F9E76B30333C370D94BEACC934D8C018F930554"
+    },
+    {
+      "path": "Tests/Editor/ActionEditorTransactionTests.cs.meta",
+      "sha256": "03BFDCF43BBECC5D182189A5AD16E77C4008E886ED42DFEF4F69FDCC2FCFE831"
+    },
+    {
+      "path": "Tests/Editor/ActionEditorWindowTests.cs",
+      "sha256": "9244AC363A9B875DD76A2AA9F7795A77AB355E83F3D333917BC88830C16FC1BE"
+    },
+    {
+      "path": "Tests/Editor/ActionEditorWindowTests.cs.meta",
+      "sha256": "EB4475DBDB433271220C65DC921094EAFDFBFE13788D273D7398D73EC89D1D8E"
+    },
+    {
+      "path": "Tests/Editor/ActionSerializedEditingTests.cs",
+      "sha256": "DD876BCA3CFA8682220227DCD449C417B3FEBFFD1491376947D5BD2649E1A876"
+    },
+    {
+      "path": "Tests/Editor/ActionSerializedEditingTests.cs.meta",
+      "sha256": "C42B6B9D9774CF48B532395DD861F090430DD068A6488FF6F4E16AC016A800E6"
+    },
+    {
+      "path": "Tests/Editor/ActionTimingTests.cs",
+      "sha256": "6690D985B57DA8EC5420F7806109AF0A0899BD2631B87D2C10E603E51F5FD04A"
+    },
+    {
+      "path": "Tests/Editor/ActionTimingTests.cs.meta",
+      "sha256": "3779250B2F36CD210DB4D2A3E239858E87734B6AD53A3EECD970E0845B18EA99"
+    },
+    {
+      "path": "Tests/Editor/BasicSampleTests.cs",
+      "sha256": "0EB36C4C70A76B070D87A5BCDBBB3A4D96DDBA94600650BCBC5126D2ECD87770"
+    },
+    {
+      "path": "Tests/Editor/BasicSampleTests.cs.meta",
+      "sha256": "CF73DE803C3BD9AA578B4EF89298F01E218DE748FDD4D0CDACE5C533D0E57130"
+    },
+    {
+      "path": "Tests/Editor/Ethan.ActionEditor.Editor.Tests.asmdef",
+      "sha256": "51E2FE03D676C33A28F7A5A376153D232FB764F084A1D352031FB82208904BB5"
+    },
+    {
+      "path": "Tests/Editor/Ethan.ActionEditor.Editor.Tests.asmdef.meta",
+      "sha256": "9B47BCA3CA44219F7FD16724FBF974856A4600E86CAE84A76D4963C6B143FE23"
+    },
+    {
+      "path": "Tests/Editor/IndependentPresentationTests.cs",
+      "sha256": "EF75102B0D9DBDA86304FFB6EA135AC9D5542D616A0E52DAC19ABD8F6DD6519D"
+    },
+    {
+      "path": "Tests/Editor/IndependentPresentationTests.cs.meta",
+      "sha256": "1BC6CBA98EF36B61EE237963A72C6990EF4CC48922915B8ECB2E0FCFD438E709"
+    },
+    {
+      "path": "Tests/Editor/MoveSolverTests.cs",
+      "sha256": "31FB144B07717B5E8A3359961BDFE2D9A221FEA5D1399B02D6ACF7D4F4F8A4C3"
+    },
+    {
+      "path": "Tests/Editor/MoveSolverTests.cs.meta",
+      "sha256": "E4FB1BEEB6D0FE46E5BE4AC787A29698B37408B72BB7FFBCE9ECCAFA89FCF801"
+    },
+    {
+      "path": "Tests/Runtime.meta",
+      "sha256": "4FA320A9145843E6704C85233FF2E5F91E99F3CEAECD81E6E7449A1238B8F6C8"
+    },
+    {
+      "path": "Tests/Runtime/ActionConfigValidatorTests.cs",
+      "sha256": "22526F3BF41DC52BE16808AE8022E4FC103529309B2EB2C477AD49A7F1B09F7D"
+    },
+    {
+      "path": "Tests/Runtime/ActionConfigValidatorTests.cs.meta",
+      "sha256": "42D934AE7572344E8A6181AFF9A7D0E5F17BCCE56A52162DE02719C556A5619C"
+    },
+    {
+      "path": "Tests/Runtime/ActionPhaseTests.cs",
+      "sha256": "9910F003951179B7C906E27939FFCF7B5F9D97AE0F6BF6ADB35951CF38BB0EBB"
+    },
+    {
+      "path": "Tests/Runtime/ActionPhaseTests.cs.meta",
+      "sha256": "EEAF89AD3263009CB38912814C993E81AEFE9CED28803FD8758BC54ABFD67119"
+    },
+    {
+      "path": "Tests/Runtime/ActionPlayerTests.cs",
+      "sha256": "278A0AE34C88712EC2A77D3C1D137849EBDC0C37EE1DEFEC5F1C3CFC8886D0DE"
+    },
+    {
+      "path": "Tests/Runtime/ActionPlayerTests.cs.meta",
+      "sha256": "BE1A47F11229F325A5CD119F55EEFB359410FDA7C7472EF05D0ECCF7A5F79AF7"
+    },
+    {
+      "path": "Tests/Runtime/Ethan.ActionEditor.Runtime.Tests.asmdef",
+      "sha256": "3E340091F937B69465762DE7F269027A3B21E73E92C45A53DB13211E568CAB39"
+    },
+    {
+      "path": "Tests/Runtime/Ethan.ActionEditor.Runtime.Tests.asmdef.meta",
+      "sha256": "CB64B8F05C3637B5160C4D7236CAB2E1EC24748FC966767F1BEE594DCCFD582A"
+    },
+    {
+      "path": "Tests/Runtime/InteractionConditionGroupTests.cs",
+      "sha256": "A7158A8F0FE27E55F0C448385BB348149E3D349C09C349DEDE241DA928363D1C"
+    },
+    {
+      "path": "Tests/Runtime/InteractionConditionGroupTests.cs.meta",
+      "sha256": "1877FB53C85490EC740DD2F66B9EF597A61B4FB0427B696A458DB3BCCB0FB092"
+    },
+    {
+      "path": "Tests/Runtime/InteractionWindowTests.cs",
+      "sha256": "36393F761AC5A2D5B075DB6DFBEDF9E60D222A44BCF22B24F20EE9241258FA01"
+    },
+    {
+      "path": "Tests/Runtime/InteractionWindowTests.cs.meta",
+      "sha256": "EC7D4D26C9D9E33E1BEA1E7EB9738809AD9C5509E6D5E3BBA3CD2C8439EE8E6C"
+    },
+    {
+      "path": "Tools~.meta",
+      "sha256": "D9D72D1149ACBBF85F75000328748C6B71E5A0E1DAB9D67E991EBA30EED36071"
+    },
+    {
+      "path": "Tools~/Build-Release.ps1",
+      "sha256": "9C14E045B433193F1A8562B7B77D2116902ADB8699BD62499C2787081B6C0B72"
+    },
+    {
+      "path": "Tools~/Sync-Repository.ps1",
+      "sha256": "D48D643D9E911B025B0BD3844E00AC99A92A93450F7DBFA8784FBD696E2B8630"
+    },
+    {
+      "path": "Tools~/Validation/manifest.json",
+      "sha256": "7F0220B4EC22991FA58CCD96725CB0EDF9D74CCC2E7D2E6E944328FB4ADEDA08"
+    },
+    {
+      "path": "Tools~/Verify-Release.ps1",
+      "sha256": "1A1B8656493F4B54EC96C9884BFED386C27395A08C8B7DBB55C8EA692230806B"
+    }
+  ],
+  "zip": {
+    "file": "com.ethan.act-action-editor-0.2.0-preview.2-source.zip",
+    "sha256": "E49327A24E29526955F7BD7EC111C316B9603C796F50777D7CBDA34C1444C424"
+  },
+  "archive": {
+    "file": "com.ethan.act-action-editor-0.2.0-preview.2.tgz",
+    "sha256": "02EF7D0F7523730B99961E4F9B63C9568B99ADABA74408F659C31A9DE8102D75"
+  }
+}

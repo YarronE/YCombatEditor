@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "com.unity.test-framework": "1.6.0"
+  },
+  "testables": [
+    "com.ethan.act-action-editor"
+  ]
+}

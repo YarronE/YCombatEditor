@@ -1,0 +1,8 @@
+.ycombat-sync.json
+Releases~/*/package/
+Library/
+Temp/
+Logs/
+obj/
+.vs/
+.DS_Store

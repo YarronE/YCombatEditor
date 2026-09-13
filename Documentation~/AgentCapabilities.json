@@ -1,0 +1,294 @@
+{
+  "schemaVersion": 1,
+  "package": "com.ethan.act-action-editor",
+  "packageVersion": "0.2.0-preview.2",
+  "kind": "frame_based_action_authoring_and_playback_core",
+  "entrypoints": {
+    "agentInstructions": "../AGENTS.md",
+    "humanTutorial": "index.html",
+    "technicalGuide": "AgentGuide.md",
+    "contracts": "../Runtime/Core/ActionContracts.cs",
+    "runtime": "../Runtime/Core/ActionPlayer.cs",
+    "eventData": "../Runtime/Data/Global.cs",
+    "editorAutomation": "../Editor/Infrastructure/ActionEditorAgent.cs"
+  },
+  "compatibility": {
+    "declaredMinimumUnity": "6000.0",
+    "testedBaseline": "6000.3.6f1",
+    "unity2022Verified": false,
+    "optionalIntegrationsVerified": false
+  },
+  "automation": {
+    "requires": "Unity Editor main-thread C# execution or CLI against a closed project",
+    "assembly": "Ethan.ActionEditor.Editor",
+    "class": "Ethan.ActionEditor.Editor.ActionEditorAgent",
+    "method": "Execute(Request)",
+    "cliMethod": "Ethan.ActionEditor.Editor.ActionEditorAgent.RunFromCommandLine",
+    "cliArguments": [
+      "-actionEditorRequest",
+      "-actionEditorResult"
+    ],
+    "resultDirectory": "<consumer-project>/Logs/ActionEditorAgent/",
+    "overwritesExistingResult": false,
+    "operations": [
+      {
+        "name": "inventory",
+        "mutates": false,
+        "requiredFields": [],
+        "scope": "Action and AnimationClip asset paths under Assets only"
+      },
+      {
+        "name": "validate",
+        "mutates": false,
+        "requiredFields": [
+          "assetPaths"
+        ],
+        "scope": "Nonempty explicit list; data validation only, not scene bindings"
+      },
+      {
+        "name": "create_action",
+        "mutates": true,
+        "requiredFields": [
+          "outputAssetPath",
+          "animationAssetPath"
+        ],
+        "optionalFields": [
+          "animationClipName",
+          "displayName",
+          "exitFrame"
+        ],
+        "scope": "NEW current-schema single-animation action below Assets; no existing asset overwrite; no scene mutation"
+      },
+      {
+        "name": "read_action",
+        "mutates": false,
+        "requiredFields": [
+          "assetPaths"
+        ],
+        "scope": "Exactly one action; stable serialized fields and GUID/local-ID references"
+      },
+      {
+        "name": "clone_action",
+        "mutates": true,
+        "requiredFields": [
+          "assetPaths",
+          "expectedDigest"
+        ],
+        "scope": "New outputAssetPath, optional edits, no overwrite; schema 2"
+      },
+      {
+        "name": "edit_action",
+        "mutates": true,
+        "requiredFields": [
+          "assetPaths",
+          "expectedDigest"
+        ],
+        "scope": "Validated leaf set or root track insert/remove/move; schema 2, optional dryRun; atomic Undo commit"
+      }
+    ],
+    "preflight": {
+      "method": "InspectActor(GameObject, SkillConfigSO)",
+      "mutates": false,
+      "scope": "Active same-object player/animator/handler and bundled movement preflight; custom movement setup and gameplay require separate checks"
+    },
+    "resultFields": [
+      "schemaVersion",
+      "success",
+      "operation",
+      "unityVersion",
+      "packageVersion",
+      "createdAssetPath",
+      "actionAssets",
+      "animationAssets",
+      "issues",
+      "contentDigest",
+      "fields",
+      "changes"
+    ],
+    "issueFields": [
+      "assetPath",
+      "code",
+      "severity",
+      "track",
+      "eventIndex",
+      "message"
+    ],
+    "exitCodes": {
+      "0": "success",
+      "2": "request or validation failure; launch/compile failure may produce no result"
+    },
+    "providesMcpServer": false,
+    "supportedRequestSchemas": [
+      1,
+      2
+    ]
+  },
+  "builtIn": [
+    "timeline_editor",
+    "undo_redo",
+    "save_and_validation",
+    "backed_up_migration",
+    "action_player",
+    "clip_animation_adapter",
+    "event_dispatch",
+    "character_controller_displacement_bridge",
+    "local_hit_stop",
+    "camera_pivot_shake",
+    "generated_basic_playback_sample",
+    "interaction_window_track",
+    "interaction_query_resolution",
+    "per_key_input_buffer_utility",
+    "explicit_timeline_fps",
+    "shared_preview_sampling",
+    "condition_groups_all_any_not",
+    "interaction_condition_diagnostics"
+  ],
+  "consumerProvided": [
+    "character_and_animation_assets",
+    "input",
+    "character_controller",
+    "camera_follow",
+    "hit_detection",
+    "target_deduplication",
+    "damage_and_knockback",
+    "runtime_vfx_audio_and_projectile_handlers",
+    "cooldown_and_energy_rules",
+    "combo_and_cancel_rules",
+    "target_selection",
+    "enemy_ai",
+    "multiplayer"
+  ],
+  "extensionPoints": [
+    {
+      "interface": "IActionAnimator",
+      "purpose": "animation backend"
+    },
+    {
+      "interface": "IActionAnimationClock",
+      "purpose": "optional absolute timeline sampling"
+    },
+    {
+      "interface": "IActionEventHandler<TEvent>",
+      "purpose": "same-GameObject built-in event handling; does not automatically add custom tracks"
+    },
+    {
+      "interface": "IActionTargetProvider",
+      "purpose": "target resolution"
+    },
+    {
+      "interface": "IDisplacementBackend",
+      "purpose": "movement backend via ConfigureDisplacement"
+    },
+    {
+      "interface": "IActionRootMotionSource",
+      "purpose": "root-motion input"
+    },
+    {
+      "interface": "InteractionCondition",
+      "purpose": "reusable ScriptableObject pure predicate; Evaluate and ConfigurationError"
+    },
+    {
+      "interface": "IInteractionResourceProvider",
+      "purpose": "same-actor resource lookup; condition never spends resources"
+    }
+  ],
+  "events": [
+    {
+      "type": "Global.Attack",
+      "field": "attackList",
+      "delivery": "OneShot: Tick only at start; Continuous: Tick per interval",
+      "consumer": "hit detection, deduplication, damage, hit-confirmed feedback"
+    },
+    {
+      "type": "Global.FxAndSound",
+      "field": "fxList",
+      "delivery": "Enter only at start",
+      "consumer": "spawn/play and lifetime or interruption cleanup"
+    },
+    {
+      "type": "Global.Jump",
+      "field": "jumpList",
+      "delivery": "range through endKey-1",
+      "consumer": "input and combo transitions"
+    },
+    {
+      "type": "Global.CancelPoint",
+      "field": "cancelList",
+      "delivery": "range; no end holds to TotalTimelineFrames",
+      "consumer": "cancellation rule"
+    },
+    {
+      "type": "Global.Projectile",
+      "field": "projectileList",
+      "delivery": "range",
+      "consumer": "projectile spawn, movement, collision, cleanup"
+    },
+    {
+      "type": "Global.WarningCue",
+      "field": "warningCueList",
+      "delivery": "range",
+      "consumer": "warning visuals/audio"
+    },
+    {
+      "type": "Global.SuperArmorSegment",
+      "field": "superArmorList",
+      "delivery": "range",
+      "consumer": "combat state enter/exit"
+    },
+    {
+      "type": "Global.AdjustMotionSegment",
+      "field": "adjustMotionList",
+      "delivery": "range",
+      "consumer": "facing updates"
+    },
+    {
+      "type": "Global.TrailToggle",
+      "field": "trailToggleList",
+      "delivery": "range; no end holds to TotalTimelineFrames",
+      "consumer": "trail activation and cleanup"
+    },
+    {
+      "type": "Global.MoveSegment",
+      "field": "moveSegmentList",
+      "delivery": "configured displacement driver OR event range",
+      "consumer": "configure backend or receiver"
+    },
+    {
+      "type": "Global.HitFx",
+      "field": "hitFxList",
+      "delivery": "no ActionPlayer dispatch",
+      "consumer": "read after a confirmed hit"
+    },
+    {
+      "type": "InteractionWindow",
+      "field": "interactionWindows",
+      "delivery": "on-demand TryResolveInteraction at inclusive frame bounds; no IActionEventHandler dispatch",
+      "consumer": "incoming queries, committed effects and custom signal handling"
+    }
+  ],
+  "notImplemented": [
+    "persistent_third_party_track_protocol",
+    "bundled_full_character_controllers",
+    "behavior_tree_editor",
+    "one_click_complete_combat_setup"
+  ],
+  "knownLimits": [
+    "legacy_global_type_names",
+    "custom_root_motion_acceptance",
+    "optional_integration_matrix",
+    "Unity_2022_unverified",
+    "legacy_timing_mode_not_normalized",
+    "two_input_animation_blend",
+    "preview_does_not_simulate_physics",
+    "external_host_event_dispatch_is_consumer_owned"
+  ],
+  "acceptance": [
+    "compile",
+    "sample_playback",
+    "config_validation",
+    "actor_preflight",
+    "consumer_scene_playback",
+    "interruption_cleanup",
+    "save_and_reopen"
+  ]
+}

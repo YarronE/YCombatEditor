@@ -1,0 +1,24 @@
+{
+  "name": "Ethan.ActionEditor.AINavigation",
+  "rootNamespace": "Ethan.ActionEditor.Integrations.AINavigation",
+  "references": [
+    "Ethan.ActionEditor.Runtime"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [
+    "ETHAN_ACTION_EDITOR_AI_NAVIGATION"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.unity.ai.navigation",
+      "expression": "2.0.0",
+      "define": "ETHAN_ACTION_EDITOR_AI_NAVIGATION"
+    }
+  ],
+  "noEngineReferences": false
+}

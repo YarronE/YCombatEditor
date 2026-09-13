@@ -1,0 +1,32 @@
+{
+  "name": "com.ethan.act-action-editor",
+  "version": "0.2.0-preview.2",
+  "displayName": "ACT Action Editor",
+  "description": "A portable, frame-based action authoring and playback package for Unity 6.",
+  "unity": "6000.0",
+  "license": "MIT",
+  "dependencies": {
+    "com.unity.modules.animation": "1.0.0",
+    "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.particlesystem": "1.0.0",
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.jsonserialize": "1.0.0"
+  },
+  "keywords": [
+    "action",
+    "combat",
+    "timeline",
+    "editor",
+    "data-driven"
+  ],
+  "author": {
+    "name": "Ethan"
+  },
+  "samples": [
+    {
+      "displayName": "Playback and Interaction Windows",
+      "description": "Generated playback and extensible interaction-window playground; no external art or input packages.",
+      "path": "Samples~/BasicPlayback"
+    }
+  ]
+}

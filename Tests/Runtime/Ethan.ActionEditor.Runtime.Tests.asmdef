@@ -1,0 +1,19 @@
+{
+  "name": "Ethan.ActionEditor.Runtime.Tests",
+  "rootNamespace": "Ethan.ActionEditor.Tests",
+  "references": [
+    "Ethan.ActionEditor.Runtime"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "noEngineReferences": false
+}
