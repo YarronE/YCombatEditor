@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Recover timeline rows for event data missing from the saved layout without modifying assets. Populated tracks remain discoverable when collapsed; unassigned projectiles display Missing Prefab and their frame.
+
 - Grouped Telegraph under Effect with shared overlap lanes, creation menu and focused visual/audio inspector pages.
 
 - Added Action Flow nodes for Allow Exit, Branch and Complete, unified legacy flow display, shared request policy and playback completion boundaries.

@@ -165,7 +165,7 @@ public partial class SkillEditorWindow
         projDef.lanes=buf=>AssignLanes(buf,projectileList,p=>p.keyNumber,p=>SegEnd(p.keyNumber,p.endKeyNumber));
         projDef.drawLanes=(r,l,c)=>DrawEventTrack(r,l,c,projectileList,projDef,
             p=>p.keyNumber,p=>SegEnd(p.keyNumber,p.endKeyNumber),
-            (p,b,e)=>{ string s=p.prefab!=null?p.prefab.name:$"F{b}"; return b==e?s:$"{s} {b}-{e}"; });
+            (p,b,e)=>{ string s=p.prefab!=null?p.prefab.name:"Missing Prefab"; return b==e?$"{s} F{b}":$"{s} {b}-{e}"; },alwaysLabel:true);
 
         var saDef=new TrackDef{
             type=Global.TrackType.SuperArmor, selType=SelType.SuperArmor, color=C_SA,
@@ -293,10 +293,12 @@ public partial class SkillEditorWindow
 
     readonly List<TrkInfo> _tracks=new List<TrkInfo>();
 
+    readonly HashSet<Global.TrackType> collapsedRecoveredTracks=new HashSet<Global.TrackType>();
+
     List<TrkInfo> BuildTracks(){
         _tracks.Clear();
         var seen=new HashSet<Global.TrackType>();
-        foreach(var layer in new[]{"Presentation","Mechanics"})
+        foreach(var layer in new[]{"Presentation","Mechanics"}) {
         for(int ti=0;ti<trackList.Count;ti++){
             var trk=trackList[ti];
             var canonical=BuiltinTrackRegistry.Canonical(trk.type);
@@ -312,8 +314,38 @@ public partial class SkillEditorWindow
             _tracks.Add(new TrkInfo{ def=def, name=def.name,
                 height=h, lanes=lanes, laneCount=laneCount, expanded=exp, trackListIdx=ti });
         }
-        if (!seen.Contains(Global.TrackType.Flow) && FlowCount > 0) _tracks.Add(new TrkInfo { def=GetDef(Global.TrackType.Flow), name="Action Flow", height=flowExpanded?FlowTrackHeight():0,expanded=flowExpanded,trackListIdx=-1 });
+        // Recover missing layout rows from active data without modifying the asset.
+        foreach(var def in TrackDefs) {
+            if(BuiltinTrackRegistry.Canonical(def.type)!=def.type || seen.Contains(def.type) ||
+                BuiltinTrackRegistry.GetCategory(def.type)!=layer || def.count==null || def.count()==0) continue;
+            seen.Add(def.type);
+            bool exp=!collapsedRecoveredTracks.Contains(def.type);
+            Dictionary<int,int> lanes=null; int laneCount=1;
+            if(def.lanes!=null) {
+                lanes=def.lanes(def.laneBuf);
+                foreach(var v in lanes.Values) if(v+1>laneCount) laneCount=v+1;
+            }
+            _tracks.Add(new TrkInfo {def=def,name=def.name,expanded=exp,trackListIdx=-1,
+                lanes=lanes,laneCount=laneCount,height=exp?(def.lanes!=null?TRACK_HEIGHT*laneCount:def.customHeight()):0});
+        }
+        }
         return _tracks;
+    }
+
+    void ToggleTrackView(TrkInfo track) {
+        if(track.trackListIdx>=0) { PushUndo(); trackList[track.trackListIdx].expanded=!track.expanded; }
+        else if(track.expanded) collapsedRecoveredTracks.Add(track.def.type);
+        else collapsedRecoveredTracks.Remove(track.def.type);
+    }
+
+    void ShowRecoveredTrackMenu(TrackDef def) {
+        var menu=new GenericMenu();
+        if(def.addEvent!=null) menu.AddItem(new GUIContent($"Add {def.itemName} at playhead"),false,()=>def.addEvent());
+        menu.AddItem(new GUIContent("Add track to layout"),false,()=>{
+            if(trackList.Exists(t=>BuiltinTrackRegistry.Canonical(t.type)==def.type)) return;
+            PushUndo(); trackList.Add(new Global.SkillTrack{type=def.type,expanded=true});
+        });
+        menu.ShowAsContext();
     }
 
     readonly List<int> _laneEnds=new List<int>();
@@ -412,11 +444,11 @@ public partial class SkillEditorWindow
                 // ── [▼/▶] 展开/折叠按钮 ──
                 int ti=t.trackListIdx;
                 if(GUI.Button(new Rect(hr.xMax-48,hr.y+5,44,20),t.expanded?"Hide":"Show",EditorStyles.miniButton)){
-                    if(ti<0) flowExpanded=!flowExpanded; else { PushUndo(); trackList[ti].expanded=!trackList[ti].expanded; }
+                    ToggleTrackView(t);
                 }
                 // 右键上下文菜单
                 if(Event.current.type==EventType.ContextClick&&hr.Contains(Event.current.mousePosition)){
-                    if(t.trackListIdx>=0) ShowTrackContextMenu(t.trackListIdx); else ShowFlowAddMenu(); Event.current.Use(); }
+                    if(t.trackListIdx>=0) ShowTrackContextMenu(t.trackListIdx); else ShowRecoveredTrackMenu(t.def); Event.current.Use(); }
             }
             y+=h;
         }
@@ -475,8 +507,8 @@ public partial class SkillEditorWindow
         if(ti<trackList.Count-1) menu.AddItem(new GUIContent("Move track down"),false,()=>{ PushUndo(); var tmp=trackList[ti]; trackList[ti]=trackList[ti+1]; trackList[ti+1]=tmp; });
         else menu.AddDisabledItem(new GUIContent("Move track down"));
         menu.AddSeparator("");
-        if(def!=null && def.type==Global.TrackType.Flow) {
-            menu.AddItem(new GUIContent("Collapse track"),false,()=>{PushUndo();foreach(var t in trackList) if(BuiltinTrackRegistry.Canonical(t.type)==Global.TrackType.Flow)t.expanded=false;flowExpanded=false;});
+        if(def!=null && def.count!=null && def.count()>0) {
+            menu.AddItem(new GUIContent("Collapse track"),false,()=>{PushUndo();foreach(var t in trackList) if(BuiltinTrackRegistry.Canonical(t.type)==def.type)t.expanded=false;});
             menu.ShowAsContext(); return;
         }
         menu.AddItem(new GUIContent("Hide track"),false,()=>{

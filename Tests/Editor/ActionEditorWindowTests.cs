@@ -573,6 +573,33 @@ namespace Ethan.ActionEditor.Editor.Tests
             Assert.That((int)Get("_validationErrorCount"), Is.GreaterThan(0));
         }
 
+        [Test]
+        public void MissingProjectileLayoutIsRecoveredWithoutChangingAssetAndCanCollapseIndependently()
+        {
+            config.tracks.Clear();
+            config.tracks.Add(new Global.SkillTrack {type=Global.TrackType.Animation,expanded=true});
+            config.projectileList.Add(new Global.Projectile {keyNumber=45});
+            string before=EditorJsonUtility.ToJson(config);
+            Invoke("LoadConfig"); Invoke("BuildTracks");
+            var rows=(System.Collections.IList)Get("_tracks");
+            object projectile=null;
+            foreach(var row in rows)
+                if((string)row.GetType().GetField("name").GetValue(row)=="Projectile") projectile=row;
+            Assert.That(projectile,Is.Not.Null);
+            Assert.That(projectile.GetType().GetField("expanded").GetValue(projectile),Is.True);
+            Assert.That(projectile.GetType().GetField("trackListIdx").GetValue(projectile),Is.EqualTo(-1));
+            Invoke("ToggleTrackView",projectile); Invoke("BuildTracks");
+            foreach(var row in rows)
+                if((string)row.GetType().GetField("name").GetValue(row)=="Projectile")
+                    Assert.That(row.GetType().GetField("expanded").GetValue(row),Is.False);
+            Assert.That(EditorJsonUtility.ToJson(config),Is.EqualTo(before));
+            config.tracks.Add(new Global.SkillTrack {type=Global.TrackType.Projectile,expanded=true});
+            Invoke("BuildTracks"); int count=0;
+            foreach(var row in rows)
+                if((string)row.GetType().GetField("name").GetValue(row)=="Projectile") count++;
+            Assert.That(count,Is.EqualTo(1));
+        }
+
         void Invoke(string method, params object[] arguments) => typeof(SkillEditorWindow).GetMethod(method, Private).Invoke(window, arguments);
         void Set(string field, object value) => typeof(SkillEditorWindow).GetField(field, Private).SetValue(window, value);
         object Get(string field) => typeof(SkillEditorWindow).GetField(field, Private).GetValue(window);

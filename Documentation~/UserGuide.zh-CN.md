@@ -71,7 +71,7 @@
 | Paste … at frame … | 在播放头处粘贴兼容类型的事件，保留原相对长度。Visual Effect 和 Audio 均可粘贴到 Effect。 |
 | Remove / Remove selected … | 删除选中事件，支持 Undo。 |
 | Move track up / down | 调整轨道顺序；Presentation 与 Mechanics 的分层显示始终保留。 |
-| Hide track | 从当前轨道列表移除显示项；事件仍保留并参与运行。使用 Add track 恢复显示。 |
+| Collapse track / Hide track | 有事件的轨道只折叠内容，保留轨道标题；空轨道可从布局移除。折叠不影响运行。 |
 
 Animation 的右键菜单还包括 `Reset source trim`（恢复源动画裁剪）、`Blend over 5 frames`、`Blend over 8 frames`（设置过渡混合）、`Clear blend`（清除该段混合）。
 
@@ -204,6 +204,8 @@ Show conditions 可配置项目提供的 ActionFlowCondition 条件资源，全�
 Scene 预览只展示时间和动画，不执行分支跳转或行为树。独立播放核心执行新 Flow 规则；外部控制器应接入共享策略，接入方法见 Agent Guide。
 
 ### Projectile：投射物
+
+时间轴会自动显示有事件但缺少布局记录的轨道，不会因此修改资产。可用轨道标题上的 Show / Hide 展开或折叠，右键 Add track to layout 将自动显示的轨道保存到布局。缺少 Prefab 的投射物显示为 `Missing Prefab F帧号`；选中后补充 Prefab，或删除不需要的事件。缺少必填引用会阻止播放前校验通过。
 
 指定 Prefab、Fire Point、Spawn Offset、Speed、Lifetime、Damage Ratio、Auto Aim、Shot Count、Spread Angle 等。用于箭矢、飞弹、弹幕。`Preview projectile` 用于观察生成位置；真实移动、追踪和碰撞需投射物接收器及项目实现。
 
